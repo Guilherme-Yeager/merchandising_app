@@ -2,11 +2,13 @@ import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/config/providers/providers_config.dart';
+import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:provider/provider.dart';
 
-void main() {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SupabaseConfig.initialize();
   runApp(
     DevicePreview(
       enabled: !kReleaseMode,

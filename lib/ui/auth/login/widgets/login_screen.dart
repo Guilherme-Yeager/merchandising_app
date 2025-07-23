@@ -66,7 +66,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 FocusScope.of(context).unfocus();
                                 if (formKey.currentState!.validate()) {
                                   AppLogger.instance.i(
-                                    "Login realizado com sucesso!",
+                                    "Login realizado com sucesso.",
                                   );
                                 }
                               },
