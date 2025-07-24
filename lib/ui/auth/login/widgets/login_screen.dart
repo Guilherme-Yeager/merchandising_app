@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
-import 'package:merchandising_app/ui/core/navigator/app_navigator.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
 import 'package:merchandising_app/utils/validators/login_validator.dart';
@@ -23,7 +22,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
-  bool loading = false;
+  bool _loading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -79,21 +78,23 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () async {
                                 FocusScope.of(context).unfocus();
                                 if (formKey.currentState!.validate()) {
-                                  loading = true;
+                                  _loading = true;
                                   setState(() {});
                                   final bool logar = await loginViewmodel.login(
                                     emailController.text,
                                     senhaController.text,
                                   );
-                                  loading = false;
+                                  _loading = false;
                                   setState(() {});
                                   if (logar) {
                                     if (context.mounted) {
-                                      AppNavigator.changePage(
+                                      Navigator.pushNamedAndRemoveUntil(
                                         context,
                                         Routes.home,
+                                        (route) => false,
                                       );
                                     }
+                                    return;
                                   }
                                 }
                               },
@@ -102,7 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 padding: EdgeInsets.symmetric(vertical: 16),
                               ),
                               child:
-                                  loading
+                                  _loading
                                       ? CircularProgressIndicator(
                                         color: Colors.white,
                                       )
