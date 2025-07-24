@@ -23,6 +23,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
+  bool loading = false;
+
   @override
   Widget build(BuildContext context) {
     final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
@@ -77,10 +79,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               onPressed: () async {
                                 FocusScope.of(context).unfocus();
                                 if (formKey.currentState!.validate()) {
+                                  loading = true;
+                                  setState(() {});
                                   final bool logar = await loginViewmodel.login(
                                     emailController.text,
                                     senhaController.text,
                                   );
+                                  loading = false;
+                                  setState(() {});
                                   if (logar) {
                                     if (context.mounted) {
                                       AppNavigator.changePage(
@@ -95,13 +101,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                 backgroundColor: AppColors.buttonLogin,
                                 padding: EdgeInsets.symmetric(vertical: 16),
                               ),
-                              child: Text(
-                                'Entrar',
-                                style: TextStyle(
-                                  fontSize: 22,
-                                  color: Colors.white,
-                                ),
-                              ),
+                              child:
+                                  loading
+                                      ? CircularProgressIndicator(
+                                        color: Colors.white,
+                                      )
+                                      : Text(
+                                        'Entrar',
+                                        style: TextStyle(
+                                          fontSize: 22,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                             ),
                           ),
                         ],
