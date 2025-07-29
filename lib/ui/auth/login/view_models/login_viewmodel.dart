@@ -33,6 +33,9 @@ class LoginViewmodel extends ChangeNotifier {
       notifyListeners();
       logou = true;
       AppLogger.instance.i("Login realizado com sucesso.");
+      AppLogger.instance.i(
+        "Código: ${_userModel!.codusur}, Usuário: ${_userModel!.nome}, Email: ${_userModel!.email}",
+      );
     } else {
       AppLogger.instance.w("Usuário logado não encontrado.");
     }

@@ -19,12 +19,14 @@ class LoginRepositoryImpl implements LoginRepository {
   /// Retorna `null` se o login falhar ou se os dados do usuário não forem encontrados.
   @override
   Future<UserModel?> login(String email, String password) async {
-    await loginService.logar(email, password);
+    AuthResponse authResponse = await loginService.logar(email, password);
     final User? user = Supabase.instance.client.auth.currentUser;
     UserModel? userModel;
     if (user != null) {
       Map<String, dynamic>? response = await userService.get(user.id);
       if (response != null) {
+        /// Adiciona o email ao json para ser incluido no modelo.
+        response["email"] = authResponse.user!.email;
         userModel = UserModel.fromJson(response);
       }
     }
