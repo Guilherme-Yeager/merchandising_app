@@ -1,13 +1,10 @@
-import 'dart:ui';
-
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
-import 'package:merchandising_app/ui/menu/widgets/menu_screen.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
-import 'package:merchandising_app/ui/cliente/widgets/cliente_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:recase/recase.dart';
 
@@ -36,15 +33,20 @@ class _HomeScreenState extends State<HomeScreen> {
       context,
       listen: false,
     );
+    final HomeViewmodel homeViewModel = Provider.of<HomeViewmodel>(context);
+
     // Dados
     final String userName =
         ReCase(loginViewmodel.userModel?.nome ?? "Usuário").titleCase;
 
-    /// ViewModel
-    final HomeViewmodel homeViewModel = Provider.of<HomeViewmodel>(context);
+    /// Páginas do AnimatedNotchBottomBar
+    final Map<String, WidgetBuilder> routesMap = Routes.getRoutes();
 
-    /// Páginas do Bottom Bar
-    final List<Widget> bottomBarPages = [MenuScreen(), ClienteScreen()];
+    final List<Widget> bottomBarPages = [
+      routesMap[Routes.menu]?.call(context) ?? SizedBox.shrink(),
+      routesMap[Routes.cliente]?.call(context) ?? SizedBox.shrink(),
+    ];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -102,5 +104,3 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 }
-
-class Appcolors {}

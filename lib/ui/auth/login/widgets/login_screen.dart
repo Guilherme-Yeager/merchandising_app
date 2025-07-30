@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
+import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
 import 'package:merchandising_app/utils/validators/login_validator.dart';
@@ -26,7 +28,12 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    /// ViewModels
     final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
+      context,
+      listen: false,
+    );
+    final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
       listen: false,
     );
@@ -84,9 +91,18 @@ class _LoginScreenState extends State<LoginScreen> {
                                     emailController.text,
                                     senhaController.text,
                                   );
-                                  _loading = false;
-                                  setState(() {});
                                   if (logar) {
+                                    /// Carrega os dados antes de navegar
+                                    await clienteViewModel.updateClientes(
+                                      loginViewmodel.userModel!.codusur,
+                                    );
+
+                                    /// Inscreve-se nas alterações em tempo real
+                                    SupabaseConfig.inscribeRealTimeChangeCliente(
+                                      clienteViewModel.updateClientes,
+                                      loginViewmodel.userModel!.codusur,
+                                    );
+
                                     if (context.mounted) {
                                       Navigator.pushNamedAndRemoveUntil(
                                         context,
@@ -97,6 +113,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                     return;
                                   }
                                 }
+                                _loading = false;
+                                setState(() {});
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.buttonLogin,

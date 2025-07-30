@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
+import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:provider/provider.dart';
 
 class ClienteScreen extends StatefulWidget {
   const ClienteScreen({super.key});
@@ -10,11 +13,17 @@ class ClienteScreen extends StatefulWidget {
 
 class _ClienteScreenState extends State<ClienteScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
+    /// Providers
+    final ClienteViewModel clienteViewmodel = Provider.of<ClienteViewModel>(
+      context,
+    );
+
     /// Dados
-    final List<Card> clientes = _getClientes();
+    final List<Card> clientes = _getClientes(clienteViewmodel.clientes);
 
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -57,7 +66,19 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           ),
                         ),
                       )
-                      : ListView(children: clientes),
+                      : ScrollbarTheme(
+                        data: ScrollbarThemeData(crossAxisMargin: -4.0),
+                        child: Scrollbar(
+                          controller: _scrollController,
+                          thumbVisibility: true,
+                          thickness: 6,
+                          radius: const Radius.circular(8),
+                          child: ListView(
+                            controller: _scrollController,
+                            children: clientes,
+                          ),
+                        ),
+                      ),
             ),
           ],
         ),
@@ -66,9 +87,11 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   /// Retorna uma lista de `Cards` com informações dos clientes.
-  List<Card> _getClientes() {
-    final List<Map<String, dynamic>> dadosClientes = [];
-    return dadosClientes.map((cliente) {
+  List<Card> _getClientes(List<ClienteModel> clientes) {
+    if (clientes.isEmpty) {
+      return [];
+    }
+    return clientes.map((cliente) {
       return Card(
         color: AppColors.inactiveCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -86,14 +109,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
             children: [
               Center(
                 child: Text(
-                  cliente['id'],
+                  cliente.codcli.toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                cliente['nome'],
+                cliente.cliente,
                 style: const TextStyle(fontWeight: FontWeight.w500),
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
@@ -103,7 +126,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 child: Divider(thickness: 1, color: AppColors.placeholder),
               ),
               Text(
-                cliente['fantasia'],
+                cliente.fantasia,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
