@@ -1,3 +1,3 @@
-import 'package:merchandising_app/domain/repositories/produto/produto_repository.dart';
+import 'package:merchandising_app/domain/repositories/pedido/produto_repository.dart';
 
-class PedidoRepositoryImpl implements ProdutoRepository {}
+class PedidoRepositoryImpl implements PedidoRepository {}
