@@ -18,6 +18,7 @@ class ClienteViewModel extends ChangeNotifier {
   /// Também registra mensagens de sucesso ou falha no [AppLogger].
   Future<void> updateClientes(int codusur) async {
     _clientes = await _clienteRepository.getAllClientes(codusur);
+    _clientes.sort((a, b) => a.codcli.compareTo(b.codcli));
     notifyListeners();
   }
 }
