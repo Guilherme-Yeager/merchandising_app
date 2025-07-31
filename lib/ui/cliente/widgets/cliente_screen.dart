@@ -27,7 +27,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
       listen: false,
     );
 
-    /// Dados
+    /// Cards com informações dos clientes
     final List<Card> clientes = _getClientes(clienteViewmodel.clientes);
 
     return Scaffold(
@@ -145,9 +145,109 @@ class _ClienteScreenState extends State<ClienteScreen> {
               ),
             ],
           ),
-          children: [],
+          children: [
+            Divider(color: Colors.black, thickness: 1, height: 1),
+            SizedBox(height: 5),
+            Text(
+              "Detalhes",
+              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 15),
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12),
+              child: Align(
+                alignment: Alignment.centerLeft,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: _buildTextFormField(
+                        initialValue: cliente.codcli.toString(),
+                        labelText: "Código",
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    _buildTextFormField(
+                      initialValue: cliente.cliente,
+                      labelText: "Nome",
+                    ),
+                    const SizedBox(height: 15),
+                    _buildTextFormField(
+                      initialValue: cliente.fantasia,
+                      labelText: "Nome Fantasia",
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: _buildTextFormField(
+                            initialValue: cliente.municent,
+                            labelText: "Munícipio",
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          flex: 2,
+                          child: _buildTextFormField(
+                            initialValue: cliente.enderent,
+                            labelText: "Endereço",
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: _buildTextFormField(
+                        initialValue: cliente.telent,
+                        labelText: "Telefone",
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                    Center(
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.buttonLogin,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 24,
+                            vertical: 16,
+                          ),
+                        ),
+                        child: const Text(
+                          "Novo",
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
+            ),
+          ],
         ),
       );
     }).toList();
+  }
+
+  TextFormField _buildTextFormField({
+    required String initialValue,
+    required String labelText,
+  }) {
+    return TextFormField(
+      initialValue: initialValue,
+      readOnly: true,
+      decoration: InputDecoration(
+        labelText: labelText,
+        labelStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+      ),
+    );
   }
 }
