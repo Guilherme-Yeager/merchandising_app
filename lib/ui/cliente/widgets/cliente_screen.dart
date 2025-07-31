@@ -16,16 +16,22 @@ class _ClienteScreenState extends State<ClienteScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
+  List<ExpansionTileController> _expansionTileController = [];
+  int? _clienteSelecionado;
+
   @override
   Widget build(BuildContext context) {
     /// Providers
     final ClienteViewModel clienteViewmodel = Provider.of<ClienteViewModel>(
       context,
     );
+
     final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
       context,
       listen: false,
     );
+
+    _sincronizarExpansionTileControllers(clienteViewmodel.clientes);
 
     /// Cards com informações dos clientes
     final List<Card> clientes = _getClientes(clienteViewmodel.clientes);
@@ -104,12 +110,44 @@ class _ClienteScreenState extends State<ClienteScreen> {
     if (clientes.isEmpty) {
       return [];
     }
-    return clientes.map((cliente) {
+    return clientes.asMap().entries.map((entry) {
+      final int index = entry.key;
+      final ClienteModel cliente = entry.value;
+      final bool isSelected = _clienteSelecionado == index;
       return Card(
-        color: AppColors.inactiveCard,
+        color: isSelected ? AppColors.activeCard : AppColors.inactiveCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         child: ExpansionTile(
+          initiallyExpanded: isSelected,
+          controller: _expansionTileController[index],
+          onExpansionChanged: (value) {
+            setState(() {
+              if (value) {
+                /// Expande o cliente selecionado e colapsa o anterior
+                if (_clienteSelecionado != null &&
+                    _clienteSelecionado != index) {
+                  _expansionTileController[_clienteSelecionado!].collapse();
+                  _expansionTileController[index].expand();
+                }
+
+                /// Atualiza o cliente selecionado
+                _clienteSelecionado = index;
+
+                /// Colapsa o cliente selecionado se ele já estiver expandido
+              } else if (isSelected) {
+                _clienteSelecionado = null;
+              }
+            });
+
+            /// Rolagem automática para o cliente selecionado
+            _scrollController.animateTo(
+              index * 126,
+              duration: Duration(milliseconds: 300),
+              curve: Curves.easeInOut,
+            );
+          },
+
           tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
@@ -232,6 +270,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
     }).toList();
   }
 
+  /// Cria um campo de texto com o valor inicial e o rótulo fornecidos.
+  /// O campo é somente leitura e possui um estilo de rótulo personalizado.
   TextFormField _buildTextFormField({
     required String initialValue,
     required String labelText,
@@ -249,5 +289,16 @@ class _ClienteScreenState extends State<ClienteScreen> {
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
       ),
     );
+  }
+
+  /// Inicializa a lista [_expansionTileController] se ainda não estiver sincronizada
+  /// com o número de clientes. Garante que haja um controller para cada cliente.
+  void _sincronizarExpansionTileControllers(List<ClienteModel> clientes) {
+    if (_expansionTileController.length != clientes.length) {
+      _expansionTileController = List.generate(
+        clientes.length,
+        (_) => ExpansionTileController(),
+      );
+    }
   }
 }
