@@ -32,8 +32,15 @@ abstract class SupabaseConfig {
           table: 'pcclient',
           event: PostgresChangeEvent.all,
           callback: (payload) {
-            AppLogger.instance.i("Alteração detectada em 'pcclient': $payload");
-            callback(codusur);
+            AppLogger.instance.w(
+              "Alteração detectada em 'pcclient': [tipo - ${payload.eventType}] | [codcli - ${payload.newRecord['codcli']}] | [codusur - ${payload.newRecord['codusur']}]",
+            );
+
+            /// Caso a alteração seja de um cliente associado ao usuário,
+            /// chama o callback para atualizar a lista de clientes.
+            if (payload.newRecord['codusur'] == codusur) {
+              callback(codusur);
+            }
           },
         )
         .subscribe();

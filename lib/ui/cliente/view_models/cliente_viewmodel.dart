@@ -20,5 +20,6 @@ class ClienteViewModel extends ChangeNotifier {
     _clientes = await _clienteRepository.getAllClientes(codusur);
     _clientes.sort((a, b) => a.codcli.compareTo(b.codcli));
     notifyListeners();
+    AppLogger.instance.i("Clientes atualizados.");
   }
 }

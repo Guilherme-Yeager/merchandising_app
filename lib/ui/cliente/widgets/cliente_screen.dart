@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:provider/provider.dart';
@@ -20,6 +21,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
     /// Providers
     final ClienteViewModel clienteViewmodel = Provider.of<ClienteViewModel>(
       context,
+    );
+    final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
+      context,
+      listen: false,
     );
 
     /// Dados
@@ -68,14 +73,22 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       )
                       : ScrollbarTheme(
                         data: ScrollbarThemeData(crossAxisMargin: -4.0),
-                        child: Scrollbar(
-                          controller: _scrollController,
-                          thumbVisibility: true,
-                          thickness: 6,
-                          radius: const Radius.circular(8),
-                          child: ListView(
+                        child: RefreshIndicator(
+                          onRefresh: () async {
+                            FocusScope.of(context).unfocus();
+                            await clienteViewmodel.updateClientes(
+                              loginViewmodel.userModel!.codusur,
+                            );
+                          },
+                          child: Scrollbar(
                             controller: _scrollController,
-                            children: clientes,
+                            thumbVisibility: true,
+                            thickness: 6,
+                            radius: const Radius.circular(8),
+                            child: ListView(
+                              controller: _scrollController,
+                              children: clientes,
+                            ),
                           ),
                         ),
                       ),
