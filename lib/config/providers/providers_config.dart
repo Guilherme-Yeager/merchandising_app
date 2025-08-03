@@ -1,10 +1,13 @@
 import 'package:merchandising_app/data/repositories/auth/login_repository_impl.dart';
+import 'package:merchandising_app/data/repositories/auth/logout_repository_impl.dart';
 import 'package:merchandising_app/data/repositories/cliente/cliente_repository_impl.dart';
 import 'package:merchandising_app/data/repositories/user/user_repository_impl.dart';
 import 'package:merchandising_app/data/service/auth/login_service.dart';
+import 'package:merchandising_app/data/service/auth/logout_service.dart';
 import 'package:merchandising_app/data/service/cliente/cliente_service.dart';
 import 'package:merchandising_app/data/service/user/user_service.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
+import 'package:merchandising_app/domain/repositories/auth/logout_reppository.dart';
 import 'package:merchandising_app/domain/repositories/cliente/cliente_repository.dart';
 import 'package:merchandising_app/domain/repositories/user/user_repository.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
@@ -21,6 +24,7 @@ abstract class ProvidersConfig {
     Provider<LoginService>(create: (_) => LoginService()),
     Provider<ClienteService>(create: (_) => ClienteService()),
     Provider<UserService>(create: (_) => UserService()),
+    Provider<LogoutService>(create: (_) => LogoutService()),
 
     /// Repositories
     ProxyProvider2<LoginService, UserService, LoginRepository>(
@@ -39,12 +43,26 @@ abstract class ProvidersConfig {
           (_, clienteService, __) =>
               ClienteRepositoryImpl(clienteService: clienteService),
     ),
+    ProxyProvider<LogoutService, LogoutRepository>(
+      update:
+          (_, logoutService, __) =>
+              LogoutRepositoryImpl(logoutService: logoutService),
+    ),
 
     /// ViewModels
     ChangeNotifierProvider(
       create:
           (context) => LoginViewmodel(
             loginRepository: Provider.of<LoginRepository>(
+              context,
+              listen: false,
+            ),
+          ),
+    ),
+    ChangeNotifierProvider(
+      create:
+          (context) => LogoutViewModel(
+            logoutReppository: Provider.of<LogoutRepository>(
               context,
               listen: false,
             ),
@@ -59,7 +77,6 @@ abstract class ProvidersConfig {
             ),
           ),
     ),
-    ChangeNotifierProvider(create: (_) => LogoutViewmodel()),
     ChangeNotifierProvider(create: (_) => HomeViewmodel()),
     ChangeNotifierProvider(create: (_) => SplashViewmodel()),
   ];

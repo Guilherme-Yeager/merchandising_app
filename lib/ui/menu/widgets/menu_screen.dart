@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/ui/auth/logout/widgets/logout_screen.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 
@@ -77,8 +78,31 @@ class _MenuScreenState extends State<MenuScreen> {
         ),
       ),
       InkWell(
-        onTap: () {
+        onTap: () async {
           AppLogger.instance.i("Opcão 'Sair' selecionada.");
+
+          /// Instância de LogoutScreen para exibir o diálogo de confirmação de logout.
+          final LogoutScreen logoutScreen = LogoutScreen();
+
+          /// Resposta do diálogo de logout.
+          /// Pode ser `true` se o usuário confirmar o logout ou `false` se cancelar.
+          /// Ou `null` se o diálogo for fechado sem ação.
+          final dynamic response = await logoutScreen.showDialogLogout(
+            title: "Sair",
+            message: "Você tem certeza que deseja sair?",
+            context: context,
+          );
+          if (response == true) {
+            if (mounted) {
+              Navigator.of(context).pushNamedAndRemoveUntil(
+                '/login',
+                (Route<dynamic> route) => false,
+              );
+              AppLogger.instance.i("Usuário confirmou o logout.");
+            }
+          } else {
+            AppLogger.instance.i("Usuário cancelou o logout.");
+          }
         },
         child: Card(
           child: Column(
