@@ -31,10 +31,14 @@ class _ClienteScreenState extends State<ClienteScreen> {
       listen: false,
     );
 
-    _sincronizarExpansionTileControllers(clienteViewmodel.clientes);
+    _sincronizarExpansionTileControllers(
+      clienteViewmodel.clientesComFiltro.length,
+    );
 
     /// Cards com informações dos clientes
-    final List<Card> clientes = _getClientes(clienteViewmodel.clientes);
+    final List<Card> clientes = _getClientes(
+      clienteViewmodel.clientesComFiltro,
+    );
 
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -48,7 +52,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
               hintStyle: WidgetStateProperty.all(
                 TextStyle(color: AppColors.placeholder, fontSize: 18),
               ),
-              onTap: () {},
+              onChanged: (text) {
+                clienteViewmodel.filtrarClientes(text);
+              },
               leading: const Icon(Icons.search),
               trailing: <Widget>[
                 Tooltip(
@@ -57,6 +63,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     onPressed: () {
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
+                      clienteViewmodel.filtrarClientes("");
                     },
                     icon: const Icon(Icons.clear_outlined),
                   ),
@@ -293,10 +300,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
   /// Inicializa a lista [_expansionTileController] se ainda não estiver sincronizada
   /// com o número de clientes. Garante que haja um controller para cada cliente.
-  void _sincronizarExpansionTileControllers(List<ClienteModel> clientes) {
-    if (_expansionTileController.length != clientes.length) {
+  ///
+  /// - [tamanhoClientes] é o número de clientes a serem sincronizados.
+  void _sincronizarExpansionTileControllers(int tamanhoClientes) {
+    if (_expansionTileController.length != tamanhoClientes) {
       _expansionTileController = List.generate(
-        clientes.length,
+        tamanhoClientes,
         (_) => ExpansionTileController(),
       );
     }
