@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -23,6 +25,10 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   @override
   Widget build(BuildContext context) {
     /// ViewModels
+    final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(
+      context,
+      listen: false,
+    );
     final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
       listen: false,
@@ -36,12 +42,57 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
       clienteViewModel,
       produtoViewModel,
     );
+
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
+            Align(
+              alignment: Alignment.centerLeft,
+              child: FractionallySizedBox(
+                widthFactor: 0.38,
+                child: InkWell(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    DialogCustom.showDialogWarning(
+                      context: context,
+                      title: "Cancelar",
+                      message:
+                          "Tem certeza que deseja cancelar?\n As alterações serão perdidas.",
+                    ).then((result) {
+                      if (result == true) {
+                        if (context.mounted) {
+                          homeViewModel.updateTitleAppBar("Clientes");
+                          clienteViewModel.limparClienteSelecionado();
+                        }
+                      }
+                    });
+                  },
+                  child: Row(
+                    textBaseline: TextBaseline.alphabetic,
+                    children: const [
+                      Icon(
+                        Icons.arrow_back_outlined,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Cancelar",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 10),
             SearchBar(
               controller: _searchController,
               hintText: "Pesquisar produto",

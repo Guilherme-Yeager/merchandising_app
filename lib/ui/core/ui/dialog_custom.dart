@@ -14,6 +14,8 @@ abstract class DialogCustom {
       title: title,
       text: message,
       confirmBtnText: "OK",
+      onConfirmBtnTap: () => Navigator.of(context).pop(true),
+      onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
   }
 
@@ -28,6 +30,8 @@ abstract class DialogCustom {
       title: title,
       text: message,
       confirmBtnText: "OK",
+      onConfirmBtnTap: () => Navigator.of(context).pop(true),
+      onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
   }
 
@@ -42,6 +46,8 @@ abstract class DialogCustom {
       title: title,
       text: message,
       confirmBtnText: "OK",
+      onConfirmBtnTap: () => Navigator.of(context).pop(true),
+      onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
   }
 
@@ -56,6 +62,8 @@ abstract class DialogCustom {
       title: title,
       text: message,
       confirmBtnText: "OK",
+      onConfirmBtnTap: () => Navigator.of(context).pop(true),
+      onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
   }
 

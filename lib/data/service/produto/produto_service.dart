@@ -4,7 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ProdutoService {
   Future<List<Map<String, dynamic>>> getAll() {
     return Supabase.instance.client
-        .from('vw_merchandising_pedidos')
+        .from('vw_merchandising_produtos')
         .select('codprod, descricao, qtest, pvenda');
   }
 }

@@ -1,4 +1,4 @@
-import 'package:merchandising_app/data/service/produto/pedido_service.dart';
+import 'package:merchandising_app/data/service/produto/produto_service.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/domain/repositories/pedido/produto_repository.dart';
 

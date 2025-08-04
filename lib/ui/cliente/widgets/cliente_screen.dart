@@ -6,6 +6,7 @@ import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
+
 import 'package:provider/provider.dart';
 
 class ClienteScreen extends StatefulWidget {

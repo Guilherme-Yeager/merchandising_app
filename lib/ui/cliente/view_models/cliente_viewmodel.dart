@@ -59,4 +59,10 @@ class ClienteViewModel extends ChangeNotifier {
     _clienteSelecionado = cliente;
     notifyListeners();
   }
+
+  /// Limpa o cliente selecionado e notifica os ouvintes sobre a mudança.
+  void limparClienteSelecionado() {
+    _clienteSelecionado = null;
+    notifyListeners();
+  }
 }

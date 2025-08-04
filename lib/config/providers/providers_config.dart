@@ -6,7 +6,7 @@ import 'package:merchandising_app/data/repositories/user/user_repository_impl.da
 import 'package:merchandising_app/data/service/auth/login_service.dart';
 import 'package:merchandising_app/data/service/auth/logout_service.dart';
 import 'package:merchandising_app/data/service/cliente/cliente_service.dart';
-import 'package:merchandising_app/data/service/produto/pedido_service.dart';
+import 'package:merchandising_app/data/service/produto/produto_service.dart';
 import 'package:merchandising_app/data/service/user/user_service.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
 import 'package:merchandising_app/domain/repositories/auth/logout_reppository.dart';

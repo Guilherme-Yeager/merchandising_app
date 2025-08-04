@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:merchandising_app/config/providers/providers_config.dart';
 import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/routing/routes.dart';
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
