@@ -1,5 +1,5 @@
 /// Modelo que representa um pedido associado a um cliente.
-class PedidoModel {
+class ProdutoModel {
   /// Código do produto.
   final int codprod;
 
@@ -12,7 +12,7 @@ class PedidoModel {
   /// Preço de venda do produto.
   final double pvenda;
 
-  PedidoModel({
+  ProdutoModel({
     required this.codprod,
     required this.descricao,
     required this.qtest,
@@ -26,8 +26,8 @@ class PedidoModel {
     "pvenda": pvenda,
   };
 
-  factory PedidoModel.fromJson(Map<String, dynamic> json) {
-    return PedidoModel(
+  factory ProdutoModel.fromJson(Map<String, dynamic> json) {
+    return ProdutoModel(
       codprod: json["codprod"],
       descricao: json["descricao"],
       qtest: json["qtest"],

@@ -51,7 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       /// Se houver um cliente selecionado, exibe a tela de pedido
       clienteViewModel.clienteSelecionado != null
-          ? routesMap[Routes.pedido]?.call(context) ?? SizedBox.shrink()
+          ? routesMap[Routes.produto]?.call(context) ?? SizedBox.shrink()
           : routesMap[Routes.cliente]?.call(context) ?? SizedBox.shrink(),
     ];
 

@@ -1,56 +1,41 @@
 import 'package:flutter/material.dart';
-import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
+import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
-import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
-import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
 
-class ClienteScreen extends StatefulWidget {
-  const ClienteScreen({super.key});
+class ProdutoScreen extends StatefulWidget {
+  const ProdutoScreen({super.key});
 
   @override
-  State<ClienteScreen> createState() => _ClienteScreenState();
+  State<ProdutoScreen> createState() => _ProdutoScreenState();
 }
 
-class _ClienteScreenState extends State<ClienteScreen> {
+class _ProdutoScreenState extends State<ProdutoScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  /// Lista de controllers para gerenciar a expansão dos clientes.
+  /// Lista de controllers para gerenciar a expansão dos produtos.
   List<ExpansibleController> _expansibleControllers = [];
-  int? _clienteSelecionado;
+  int? _produtoSelecionado;
 
   @override
   Widget build(BuildContext context) {
-    /// Providers
-    final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
-      context,
-    );
-
     /// ViewModels
-    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
-      context,
-      listen: false,
-    );
-    final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(
+    final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
       listen: false,
     );
     final ProdutoViewModel produtoViewModel = Provider.of<ProdutoViewModel>(
       context,
-      listen: false,
     );
 
-    /// Cards com informações dos clientes
-    final List<Card> clientes = _getClientes(
+    /// Cards com informações dos produtos
+    final List<Card> produtos = _getProdutos(
       clienteViewModel,
-      homeViewModel,
       produtoViewModel,
     );
-
     return Scaffold(
       backgroundColor: AppColors.mainColor,
       body: Padding(
@@ -59,12 +44,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
           children: [
             SearchBar(
               controller: _searchController,
-              hintText: "Pesquisar cliente",
+              hintText: "Pesquisar produto",
               hintStyle: WidgetStateProperty.all(
                 TextStyle(color: AppColors.placeholder, fontSize: 18),
               ),
               onChanged: (text) {
-                clienteViewModel.filtrarClientes(text);
+                produtoViewModel.filtrarProdutos(text);
               },
               leading: const Icon(Icons.search),
               trailing: <Widget>[
@@ -74,7 +59,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     onPressed: () {
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
-                      clienteViewModel.filtrarClientes("");
+                      produtoViewModel.filtrarProdutos("");
                     },
                     icon: const Icon(Icons.clear_outlined),
                   ),
@@ -84,10 +69,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
             const SizedBox(height: 10),
             Expanded(
               child:
-                  clientes.isEmpty
+                  produtos.isEmpty
                       ? Center(
                         child: const Text(
-                          "Nenhum cliente encontrado.",
+                          "Nenhum produto encontrado.",
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 18,
@@ -100,9 +85,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: RefreshIndicator(
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
-                            await clienteViewModel.updateClientes(
-                              loginViewModel.userModel!.codusur,
-                            );
                           },
                           child: Scrollbar(
                             controller: _scrollController,
@@ -111,7 +93,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             radius: const Radius.circular(8),
                             child: ListView(
                               controller: _scrollController,
-                              children: clientes,
+                              children: produtos,
                             ),
                           ),
                         ),
@@ -123,28 +105,19 @@ class _ClienteScreenState extends State<ClienteScreen> {
     );
   }
 
-  /// Retorna uma lista de `Cards` com informações dos clientes.
-  ///
-  /// - [clienteViewModel] é o ViewModel que contém a lista de clientes filtrados.
-  /// - [homeViewModel] é o ViewModel que gerencia o estado da tela inicial.
-  /// - [produtoViewModel] é o ViewModel que gerencia os produtos.
-  List<Card> _getClientes(
+  List<Card> _getProdutos(
     ClienteViewModel clienteViewModel,
-    HomeViewModel homeViewModel,
     ProdutoViewModel produtoViewModel,
   ) {
-    List<ClienteModel> clientes = clienteViewModel.clientesComFiltro;
-    if (clientes.isEmpty) {
+    List<ProdutoModel> produtos = produtoViewModel.produtosComFiltro;
+    if (produtos.isEmpty) {
       return [];
     }
-
-    /// Sincroniza os controllers de expansão com o número de clientes
-    /// para garantir que cada cliente tenha um controller correspondente.
-    _sincronizarExpansibleControllers(clientes.length);
-    return clientes.asMap().entries.map((entry) {
+    _sincronizarExpansibleControllers(produtos.length);
+    return produtos.asMap().entries.map((entry) {
       final int index = entry.key;
-      final ClienteModel cliente = entry.value;
-      final bool isSelected = _clienteSelecionado == index;
+      final ProdutoModel produto = entry.value;
+      final bool isSelected = _produtoSelecionado == index;
       return Card(
         color: isSelected ? AppColors.activeCard : AppColors.inactiveCard,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -156,18 +129,18 @@ class _ClienteScreenState extends State<ClienteScreen> {
             setState(() {
               if (value) {
                 /// Expande o cliente selecionado e colapsa o anterior
-                if (_clienteSelecionado != null &&
-                    _clienteSelecionado != index) {
-                  _expansibleControllers[_clienteSelecionado!].collapse();
+                if (_produtoSelecionado != null &&
+                    _produtoSelecionado != index) {
+                  _expansibleControllers[_produtoSelecionado!].collapse();
                   _expansibleControllers[index].expand();
                 }
 
                 /// Atualiza o cliente selecionado
-                _clienteSelecionado = index;
+                _produtoSelecionado = index;
 
                 /// Colapsa o cliente selecionado se ele já estiver expandido
               } else if (isSelected) {
-                _clienteSelecionado = null;
+                _produtoSelecionado = null;
               }
             });
 
@@ -190,24 +163,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
             children: [
               Center(
                 child: Text(
-                  cliente.codcli.toString(),
+                  produto.codprod.toString(),
                   style: const TextStyle(fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 4),
               Text(
-                cliente.cliente,
+                produto.descricao,
                 style: const TextStyle(fontWeight: FontWeight.w500),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              const SizedBox(
-                width: 30,
-                child: Divider(thickness: 1, color: AppColors.placeholder),
-              ),
-              Text(
-                cliente.fantasia,
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
               ),
@@ -228,75 +192,51 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    FractionallySizedBox(
-                      widthFactor: 0.5,
-                      child: _buildTextFormField(
-                        initialValue: cliente.codcli.toString(),
-                        labelText: "Código",
-                      ),
-                    ),
-                    const SizedBox(height: 15),
-                    _buildTextFormField(
-                      initialValue: cliente.cliente,
-                      labelText: "Nome",
-                    ),
-                    const SizedBox(height: 15),
-                    _buildTextFormField(
-                      initialValue: cliente.fantasia,
-                      labelText: "Nome Fantasia",
-                    ),
-                    const SizedBox(height: 15),
                     Row(
                       children: [
-                        Flexible(
+                        Expanded(
+                          flex: 40,
                           child: _buildTextFormField(
-                            initialValue: cliente.municent,
-                            labelText: "Munícipio",
+                            initialValue: produto.codprod.toString(),
+                            labelText: "Código",
                           ),
                         ),
-                        const SizedBox(width: 10),
-                        Flexible(
-                          flex: 2,
+                        SizedBox(width: 8),
+                        Expanded(
+                          flex: 60,
                           child: _buildTextFormField(
-                            initialValue: cliente.enderent,
-                            labelText: "Endereço",
+                            initialValue: produto.pvenda.toString(),
+                            labelText: "Preço de Venda",
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
                     FractionallySizedBox(
-                      widthFactor: 0.5,
+                      widthFactor: 0.65,
                       child: _buildTextFormField(
-                        initialValue: cliente.telent,
-                        labelText: "Telefone",
+                        initialValue: produto.qtest.toInt().toString(),
+                        labelText: "Quantidade disponível",
                       ),
+                    ),
+
+                    const SizedBox(height: 10),
+                    _buildTextFormField(
+                      initialValue: produto.descricao,
+                      labelText: "Descrição",
+                      maxLines: 3,
                     ),
                     const SizedBox(height: 15),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () async {
-                          /// Atualiza os produtos
-                          await produtoViewModel.updateProdutos();
-
-                          clienteViewModel.selecionarCliente(cliente);
-                          homeViewModel.updateTitleAppBar("Produtos");
-
-                          AppLogger.instance.i(
-                            "Cliente selecionado: ${cliente.codcli}",
-                          );
-                        },
+                        onPressed: () {},
                         style: ElevatedButton.styleFrom(
+                          shape: const CircleBorder(),
+                          padding: const EdgeInsets.all(20),
                           backgroundColor: AppColors.buttonLogin,
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 24,
-                            vertical: 16,
-                          ),
+                          foregroundColor: Colors.white,
                         ),
-                        child: const Text(
-                          "Novo",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                        child: Icon(Icons.edit_outlined, size: 26),
                       ),
                     ),
                     const SizedBox(height: 15),
@@ -315,10 +255,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
   TextFormField _buildTextFormField({
     required String initialValue,
     required String labelText,
+    int maxLines = 1,
   }) {
     return TextFormField(
       initialValue: initialValue,
       readOnly: true,
+      maxLines: maxLines,
       decoration: InputDecoration(
         labelText: labelText,
         labelStyle: TextStyle(
@@ -334,13 +276,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   /// Inicializa a lista [_expansibleControllers] se ainda não estiver sincronizada
-  /// com o número de clientes. Garante que haja um controller para cada cliente.
+  /// com o número de produtos. Garante que haja um controller para cada cliente.
   ///
-  /// - [tamanhoClientes] é o número de clientes a serem sincronizados.
-  void _sincronizarExpansibleControllers(int tamanhoClientes) {
-    if (_expansibleControllers.length != tamanhoClientes) {
+  /// - [tamanhoprodutos] é o número de produtos a serem sincronizados.
+  void _sincronizarExpansibleControllers(int tamanhoprodutos) {
+    if (_expansibleControllers.length != tamanhoprodutos) {
       _expansibleControllers = List.generate(
-        tamanhoClientes,
+        tamanhoprodutos,
         (_) => ExpansibleController(),
       );
     }
