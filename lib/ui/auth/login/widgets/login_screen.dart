@@ -29,7 +29,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     /// ViewModels
-    final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
+    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
       context,
       listen: false,
     );
@@ -87,20 +87,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (formKey.currentState!.validate()) {
                                   _loading = true;
                                   setState(() {});
-                                  final bool logar = await loginViewmodel.login(
+                                  final bool logar = await loginViewModel.login(
                                     emailController.text,
                                     senhaController.text,
                                   );
                                   if (logar) {
                                     /// Carrega os dados antes de navegar
                                     await clienteViewModel.updateClientes(
-                                      loginViewmodel.userModel!.codusur,
+                                      loginViewModel.userModel!.codusur,
                                     );
 
                                     /// Inscreve-se nas alterações em tempo real
                                     SupabaseConfig.inscribeRealTimeChangeCliente(
                                       clienteViewModel.updateClientes,
-                                      loginViewmodel.userModel!.codusur,
+                                      loginViewModel.userModel!.codusur,
                                     );
 
                                     if (context.mounted) {

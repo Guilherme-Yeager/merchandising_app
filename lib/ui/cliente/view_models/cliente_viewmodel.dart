@@ -13,6 +13,11 @@ class ClienteViewModel extends ChangeNotifier {
 
   List<ClienteModel> get clientesComFiltro => _clientesComFiltro;
 
+  /// Representa o cliente selecionado.
+  ClienteModel? _clienteSelecionado;
+
+  ClienteModel? get clienteSelecionado => _clienteSelecionado;
+
   final ClienteRepository _clienteRepository;
 
   ClienteViewModel({required ClienteRepository clienteRepository})
@@ -44,6 +49,14 @@ class ClienteViewModel extends ChangeNotifier {
                 cliente.cliente.toLowerCase().contains(filtro.toLowerCase());
           }).toList();
     }
+    notifyListeners();
+  }
+
+  /// Seleciona um cliente e notifica os ouvintes sobre a mudança.
+  ///
+  /// - [cliente] é o cliente a ser selecionado.
+  void selecionarCliente(ClienteModel cliente) {
+    _clienteSelecionado = cliente;
     notifyListeners();
   }
 }

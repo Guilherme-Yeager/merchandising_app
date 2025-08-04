@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-class HomeViewmodel extends ChangeNotifier {
+class HomeViewModel extends ChangeNotifier {
   /// Título da AppBar.
   String _titleAppBar = "";
 

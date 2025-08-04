@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class ClienteScreen extends StatefulWidget {
@@ -16,29 +18,29 @@ class _ClienteScreenState extends State<ClienteScreen> {
   final TextEditingController _searchController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
-  List<ExpansionTileController> _expansionTileController = [];
+  /// Lista de controllers para gerenciar a expansão dos clientes.
+  List<ExpansibleController> _expansibleControllers = [];
   int? _clienteSelecionado;
 
   @override
   Widget build(BuildContext context) {
     /// Providers
-    final ClienteViewModel clienteViewmodel = Provider.of<ClienteViewModel>(
+    final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
     );
 
-    final LoginViewmodel loginViewmodel = Provider.of<LoginViewmodel>(
+    /// ViewModels
+    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
+      context,
+      listen: false,
+    );
+    final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(
       context,
       listen: false,
     );
 
-    _sincronizarExpansionTileControllers(
-      clienteViewmodel.clientesComFiltro.length,
-    );
-
     /// Cards com informações dos clientes
-    final List<Card> clientes = _getClientes(
-      clienteViewmodel.clientesComFiltro,
-    );
+    final List<Card> clientes = _getClientes(clienteViewModel, homeViewModel);
 
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -53,7 +55,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 TextStyle(color: AppColors.placeholder, fontSize: 18),
               ),
               onChanged: (text) {
-                clienteViewmodel.filtrarClientes(text);
+                clienteViewModel.filtrarClientes(text);
               },
               leading: const Icon(Icons.search),
               trailing: <Widget>[
@@ -63,7 +65,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     onPressed: () {
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
-                      clienteViewmodel.filtrarClientes("");
+                      clienteViewModel.filtrarClientes("");
                     },
                     icon: const Icon(Icons.clear_outlined),
                   ),
@@ -89,8 +91,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: RefreshIndicator(
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
-                            await clienteViewmodel.updateClientes(
-                              loginViewmodel.userModel!.codusur,
+                            await clienteViewModel.updateClientes(
+                              loginViewModel.userModel!.codusur,
                             );
                           },
                           child: Scrollbar(
@@ -113,10 +115,20 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   /// Retorna uma lista de `Cards` com informações dos clientes.
-  List<Card> _getClientes(List<ClienteModel> clientes) {
+  ///
+  /// - [clienteViewModel] é o ViewModel que contém a lista de clientes filtrados.
+  List<Card> _getClientes(
+    ClienteViewModel clienteViewModel,
+    HomeViewModel homeViewModel,
+  ) {
+    List<ClienteModel> clientes = clienteViewModel.clientesComFiltro;
     if (clientes.isEmpty) {
       return [];
     }
+
+    /// Sincroniza os controllers de expansão com o número de clientes
+    /// para garantir que cada cliente tenha um controller correspondente.
+    _sincronizarExpansibleControllers(clientes.length);
     return clientes.asMap().entries.map((entry) {
       final int index = entry.key;
       final ClienteModel cliente = entry.value;
@@ -127,15 +139,15 @@ class _ClienteScreenState extends State<ClienteScreen> {
         margin: const EdgeInsets.symmetric(horizontal: 5, vertical: 5),
         child: ExpansionTile(
           initiallyExpanded: isSelected,
-          controller: _expansionTileController[index],
+          controller: _expansibleControllers[index],
           onExpansionChanged: (value) {
             setState(() {
               if (value) {
                 /// Expande o cliente selecionado e colapsa o anterior
                 if (_clienteSelecionado != null &&
                     _clienteSelecionado != index) {
-                  _expansionTileController[_clienteSelecionado!].collapse();
-                  _expansionTileController[index].expand();
+                  _expansibleControllers[_clienteSelecionado!].collapse();
+                  _expansibleControllers[index].expand();
                 }
 
                 /// Atualiza o cliente selecionado
@@ -252,7 +264,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     const SizedBox(height: 15),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          clienteViewModel.selecionarCliente(cliente);
+                          homeViewModel.updateTitleAppBar("Produtos");
+                          AppLogger.instance.i(
+                            "Cliente selecionado: ${cliente.codcli}",
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.buttonLogin,
                           padding: EdgeInsets.symmetric(
@@ -294,19 +312,21 @@ class _ClienteScreenState extends State<ClienteScreen> {
           fontWeight: FontWeight.w700,
         ),
         border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        filled: true,
+        fillColor: Colors.white,
       ),
     );
   }
 
-  /// Inicializa a lista [_expansionTileController] se ainda não estiver sincronizada
+  /// Inicializa a lista [_expansibleControllers] se ainda não estiver sincronizada
   /// com o número de clientes. Garante que haja um controller para cada cliente.
   ///
   /// - [tamanhoClientes] é o número de clientes a serem sincronizados.
-  void _sincronizarExpansionTileControllers(int tamanhoClientes) {
-    if (_expansionTileController.length != tamanhoClientes) {
-      _expansionTileController = List.generate(
+  void _sincronizarExpansibleControllers(int tamanhoClientes) {
+    if (_expansibleControllers.length != tamanhoClientes) {
+      _expansibleControllers = List.generate(
         tamanhoClientes,
-        (_) => ExpansionTileController(),
+        (_) => ExpansibleController(),
       );
     }
   }

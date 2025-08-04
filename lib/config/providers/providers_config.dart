@@ -52,7 +52,7 @@ abstract class ProvidersConfig {
     /// ViewModels
     ChangeNotifierProvider(
       create:
-          (context) => LoginViewmodel(
+          (context) => LoginViewModel(
             loginRepository: Provider.of<LoginRepository>(
               context,
               listen: false,
@@ -77,7 +77,7 @@ abstract class ProvidersConfig {
             ),
           ),
     ),
-    ChangeNotifierProvider(create: (_) => HomeViewmodel()),
+    ChangeNotifierProvider(create: (_) => HomeViewModel()),
     ChangeNotifierProvider(create: (_) => SplashViewmodel()),
   ];
 }

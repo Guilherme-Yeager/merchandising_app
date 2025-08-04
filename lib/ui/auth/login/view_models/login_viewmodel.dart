@@ -4,7 +4,7 @@ import 'package:merchandising_app/domain/repositories/auth/login_repository.dart
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 
 /// ViewModel responsável por gerenciar o estado de autenticação do usuário.
-class LoginViewmodel extends ChangeNotifier {
+class LoginViewModel extends ChangeNotifier {
   UserModel? _userModel;
 
   /// Usuário autenticado.
@@ -12,7 +12,7 @@ class LoginViewmodel extends ChangeNotifier {
 
   final LoginRepository _loginRepository;
 
-  LoginViewmodel({required LoginRepository loginRepository})
+  LoginViewModel({required LoginRepository loginRepository})
     : _loginRepository = loginRepository;
 
   /// Realiza o login do usuário com o e-mail e senha fornecidos.
