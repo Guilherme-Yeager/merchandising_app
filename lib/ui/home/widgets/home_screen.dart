@@ -6,6 +6,7 @@ import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart'
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
+import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:recase/recase.dart';
 
@@ -37,6 +38,10 @@ class _HomeScreenState extends State<HomeScreen> {
     final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
     );
+    final ProdutoViewModel produtoViewModel = Provider.of<ProdutoViewModel>(
+      context,
+      listen: false,
+    );
     final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(context);
 
     // Dados
@@ -57,13 +62,26 @@ class _HomeScreenState extends State<HomeScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          homeViewModel.titleAppBar == ""
-              ? "Olá, $userName"
-              : homeViewModel.titleAppBar,
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26.0),
-        ),
         toolbarHeight: 100,
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              homeViewModel.titleAppBar == ""
+                  ? "Olá, $userName"
+                  : homeViewModel.titleAppBar,
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26.0),
+            ),
+            if (homeViewModel.subtitleAppBar != null) ...[
+              SizedBox(height: 4),
+              Text(
+                homeViewModel.subtitleAppBar!,
+                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
+              ),
+            ],
+          ],
+        ),
       ),
       body: PageView(
         controller: _pageController,
@@ -102,13 +120,22 @@ class _HomeScreenState extends State<HomeScreen> {
           AppLogger.instance.i("Página selecionada: ${bottomBarPages[index]}");
           if (index == 0) {
             homeViewModel.updateTitleAppBar("");
+            homeViewModel.updateSubtitleAppBar(null);
           } else if (index == 1) {
             /// Caso haja um cliente seleconado, altera o título do AppBar
             /// para "Pedido", caso contrário, mantém "Clientes"
             if (clienteViewModel.clienteSelecionado != null) {
+              produtoViewModel.limparFiltro();
               homeViewModel.updateTitleAppBar("Produtos");
+              homeViewModel.updateSubtitleAppBar(
+                "Total: ${produtoViewModel.produtosComFiltro.length}",
+              );
             } else {
+              clienteViewModel.limparFiltro();
               homeViewModel.updateTitleAppBar("Clientes");
+              homeViewModel.updateSubtitleAppBar(
+                "Total: ${clienteViewModel.clientesComFiltro.length}",
+              );
             }
           }
           _pageController.jumpToPage(index);

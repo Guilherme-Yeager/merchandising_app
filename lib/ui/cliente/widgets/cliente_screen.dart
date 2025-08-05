@@ -66,6 +66,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
               ),
               onChanged: (text) {
                 clienteViewModel.filtrarClientes(text);
+                homeViewModel.updateSubtitleAppBar(
+                  "Total: ${clienteViewModel.clientesComFiltro.length}",
+                );
               },
               leading: const Icon(Icons.search),
               trailing: <Widget>[
@@ -76,6 +79,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
                       clienteViewModel.filtrarClientes("");
+                      homeViewModel.updateSubtitleAppBar(
+                        "Total: ${clienteViewModel.clientesComFiltro.length}",
+                      );
                     },
                     icon: const Icon(Icons.clear_outlined),
                   ),
@@ -125,6 +131,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
   }
 
   /// Retorna uma lista de `Cards` com informações dos clientes.
+  /// Atualiza o título da AppBar para tela de produtos.
   ///
   /// - [clienteViewModel] é o ViewModel que contém a lista de clientes filtrados.
   /// - [homeViewModel] é o ViewModel que gerencia o estado da tela inicial.
@@ -171,13 +178,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
                 _clienteSelecionado = null;
               }
             });
-
-            /// Rolagem automática para o cliente selecionado
-            _scrollController.animateTo(
-              index * 126,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
           },
           tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           shape: RoundedRectangleBorder(
@@ -282,6 +282,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
                           clienteViewModel.selecionarCliente(cliente);
                           homeViewModel.updateTitleAppBar("Produtos");
+                          homeViewModel.updateSubtitleAppBar(
+                            "Total: ${produtoViewModel.produtosComFiltro.length}",
+                          );
 
                           AppLogger.instance.i(
                             "Cliente selecionado: ${cliente.codcli}",

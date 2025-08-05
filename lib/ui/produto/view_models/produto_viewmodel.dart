@@ -45,4 +45,11 @@ class ProdutoViewModel extends ChangeNotifier {
     }
     notifyListeners();
   }
+
+  /// Limpa o filtro selecionado, fazendo a listada de filtro ter o mesmo
+  /// conteúdo da lista original.
+  void limparFiltro() {
+    _produtosComFiltro = List.from(_produtos);
+    notifyListeners();
+  }
 }

@@ -66,6 +66,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         if (context.mounted) {
                           homeViewModel.updateTitleAppBar("Clientes");
                           clienteViewModel.limparClienteSelecionado();
+                          homeViewModel.updateSubtitleAppBar(
+                            "Total: ${clienteViewModel.clientesComFiltro.length}",
+                          );
                         }
                       }
                     });
@@ -101,6 +104,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
               ),
               onChanged: (text) {
                 produtoViewModel.filtrarProdutos(text);
+                homeViewModel.updateSubtitleAppBar(
+                  "Total: ${produtoViewModel.produtosComFiltro.length}",
+                );
               },
               leading: const Icon(Icons.search),
               trailing: <Widget>[
@@ -111,6 +117,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                       _searchController.clear();
                       FocusScope.of(context).unfocus();
                       produtoViewModel.filtrarProdutos("");
+                      homeViewModel.updateSubtitleAppBar(
+                        "Total: ${produtoViewModel.produtosComFiltro.length}",
+                      );
                     },
                     icon: const Icon(Icons.clear_outlined),
                   ),
@@ -194,13 +203,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                 _produtoSelecionado = null;
               }
             });
-
-            /// Rolagem automática para o cliente selecionado
-            _scrollController.animateTo(
-              index * 126,
-              duration: Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-            );
           },
           tilePadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
           shape: RoundedRectangleBorder(

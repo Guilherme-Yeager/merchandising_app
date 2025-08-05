@@ -65,4 +65,11 @@ class ClienteViewModel extends ChangeNotifier {
     _clienteSelecionado = null;
     notifyListeners();
   }
+
+  /// Limpa o filtro selecionado, fazendo a listada de filtro ter o mesmo
+  /// conteúdo da lista original.
+  void limparFiltro() {
+    _clientesComFiltro = List.from(_clientes);
+    notifyListeners();
+  }
 }
