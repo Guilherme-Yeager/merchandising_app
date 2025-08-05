@@ -145,6 +145,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         child: RefreshIndicator(
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
+                            await produtoViewModel.updateProdutos();
                           },
                           child: Scrollbar(
                             controller: _scrollController,
