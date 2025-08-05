@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/domain/models/user/user_model.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
@@ -26,20 +27,23 @@ class LoginViewModel extends ChangeNotifier {
   ///
   /// Também registra mensagens de sucesso ou falha no [AppLogger].
   Future<bool> login(String email, String password) async {
-    UserModel? userModel = await _loginRepository.login(email, password);
     bool logou = false;
-    if (userModel != null) {
-      _userModel = userModel;
-      notifyListeners();
-      logou = true;
-      AppLogger.instance.i("Login realizado com sucesso.");
-      AppLogger.instance.i(
-        "Código: ${_userModel!.codusur}, Usuário: ${_userModel!.nome}, Email: ${_userModel!.email}",
-      );
-    } else {
-      AppLogger.instance.w("Usuário logado não encontrado.");
+    try {
+      UserModel? userModel = await _loginRepository.login(email, password);
+      if (userModel != null) {
+        _userModel = userModel;
+        notifyListeners();
+        logou = true;
+        AppLogger.instance.i("Login realizado com sucesso.");
+        AppLogger.instance.i(
+          "Código: ${_userModel!.codusur}, Usuário: ${_userModel!.nome}, Email: ${_userModel!.email}",
+        );
+      } else {
+        AppLogger.instance.w("Usuário logado não encontrado.");
+      }
+    } on ServiceException {
+      rethrow;
     }
-
     return logou;
   }
 }

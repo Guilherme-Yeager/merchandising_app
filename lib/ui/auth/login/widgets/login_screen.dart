@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merchandising_app/config/supabase/supabase_config.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
 import 'package:merchandising_app/utils/validators/login_validator.dart';
 import 'package:provider/provider.dart';
@@ -87,10 +89,23 @@ class _LoginScreenState extends State<LoginScreen> {
                                 if (formKey.currentState!.validate()) {
                                   _loading = true;
                                   setState(() {});
-                                  final bool logar = await loginViewModel.login(
-                                    emailController.text,
-                                    senhaController.text,
-                                  );
+                                  bool logar = false;
+                                  try {
+                                    logar = await loginViewModel.login(
+                                      emailController.text,
+                                      senhaController.text,
+                                    );
+                                  } on ServiceException catch (exception) {
+                                    if (exception.tipo ==
+                                        TipoErro.userBadLogin) {
+                                      if (context.mounted) {
+                                        DialogCustom.showDialogError(
+                                          message: exception.mensagem,
+                                          context: context,
+                                        );
+                                      }
+                                    }
+                                  }
                                   if (logar) {
                                     /// Carrega os dados antes de navegar
                                     await clienteViewModel.updateClientes(
@@ -102,7 +117,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                       clienteViewModel.updateClientes,
                                       loginViewModel.userModel!.codusur,
                                     );
-
                                     if (context.mounted) {
                                       Navigator.pushNamedAndRemoveUntil(
                                         context,
@@ -110,7 +124,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                         (route) => false,
                                       );
                                     }
-                                    return;
                                   }
                                 }
                                 _loading = false;
