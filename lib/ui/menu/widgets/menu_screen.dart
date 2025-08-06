@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/ui/auth/logout/widgets/logout_screen.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -94,6 +96,7 @@ class _MenuScreenState extends State<MenuScreen> {
           );
           if (response == true) {
             if (mounted) {
+              SupabaseConfig.unsubscribeRealTimeChanges();
               Navigator.of(context).pushNamedAndRemoveUntil(
                 '/login',
                 (Route<dynamic> route) => false,
