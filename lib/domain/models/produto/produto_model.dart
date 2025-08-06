@@ -26,12 +26,14 @@ class ProdutoModel {
     "pvenda": pvenda,
   };
 
+  /// A desserialização trata os valores nulos colocando valores
+  /// padrão.
   factory ProdutoModel.fromJson(Map<String, dynamic> json) {
     return ProdutoModel(
       codprod: json["codprod"],
-      descricao: json["descricao"],
-      qtest: json["qtest"],
-      pvenda: json["pvenda"],
+      descricao: json["descricao"] ?? "Sem descrição",
+      qtest: json["qtest"] ?? 0,
+      pvenda: json["pvenda"] ?? 0,
     );
   }
 }

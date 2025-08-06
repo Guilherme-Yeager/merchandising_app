@@ -46,16 +46,18 @@ class ClienteModel {
     "cgcent": cgcent,
   };
 
+  /// A desserialização trata os valores nulos colocando valores
+  /// padrão.
   factory ClienteModel.fromJson(Map<String, dynamic> json) {
     return ClienteModel(
       codcli: json["codcli"],
-      cliente: json["cliente"],
-      fantasia: json["fantasia"],
-      telent: json["telent"],
-      enderent: json["enderent"],
-      municent: json["municent"],
-      bairrocob: json["bairrocob"],
-      cgcent: json["cgcent"],
+      cliente: json["cliente"] ?? "Sem nome",
+      fantasia: json["fantasia"] ?? "Sem nome fantasia",
+      telent: json["telent"] ?? "Sem telefone",
+      enderent: json["enderent"] ?? "Sem endereço",
+      municent: json["municent"] ?? "Sem município",
+      bairrocob: json["bairrocob"] ?? "Sem bairro",
+      cgcent: json["cgcent"] ?? "Sem CNPJ",
     );
   }
 }
