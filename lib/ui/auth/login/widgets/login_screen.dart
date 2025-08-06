@@ -8,6 +8,7 @@ import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart'
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
+import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:merchandising_app/utils/validators/login_validator.dart';
 import 'package:provider/provider.dart';
 import 'package:validatorless/validatorless.dart';
@@ -36,6 +37,10 @@ class _LoginScreenState extends State<LoginScreen> {
       listen: false,
     );
     final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
+      context,
+      listen: false,
+    );
+    final ProdutoViewModel produtoViewModel = Provider.of<ProdutoViewModel>(
       context,
       listen: false,
     );
@@ -116,6 +121,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     SupabaseConfig.inscribeRealTimeChangeCliente(
                                       clienteViewModel.updateClientes,
                                       loginViewModel.userModel!.codusur,
+                                    );
+                                    SupabaseConfig.inscribeRealTimeChangeProduto(
+                                      produtoViewModel.updateProdutos,
                                     );
                                     if (context.mounted) {
                                       Navigator.pushNamedAndRemoveUntil(

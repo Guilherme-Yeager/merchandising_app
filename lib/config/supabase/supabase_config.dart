@@ -50,6 +50,31 @@ abstract class SupabaseConfig {
     isInscribeChannels = true;
   }
 
+  /// Inscreve o cliente para receber notificações em tempo real
+  /// sobre qualquer alteração (inserção, atualização, deleção) na tabela `pcprodut`.
+  ///
+  /// [callback] é chamado sempre que uma alteração é detectada.
+  static void inscribeRealTimeChangeProduto(Function callback) {
+    Supabase.instance.client
+        .channel('clients-realtime-changes')
+        .onPostgresChanges(
+          schema: 'public',
+          table: 'pcprodut',
+          event: PostgresChangeEvent.all,
+          callback: (payload) {
+            AppLogger.instance.w(
+              "Alteração detectada em 'pcprodut': [tipo - ${payload.eventType}] | [codprod - ${payload.newRecord['codprod']}]",
+            );
+            callback();
+          },
+        )
+        .subscribe();
+    AppLogger.instance.i(
+      "Inscrito em alterações de tempo real na tabela 'pcclient'.",
+    );
+    isInscribeChannels = true;
+  }
+
   /// Remove todas as inscrições ativas em canais de realtime do Supabase.
   ///
   /// Caso não haja inscrições ativas, apenas loga um aviso.
