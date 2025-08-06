@@ -4,6 +4,7 @@ import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
@@ -102,7 +103,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 child: FractionallySizedBox(
                   widthFactor: 0.52,
                   child: InkWell(
-                    onTap: () {},
+                    onTap: () async {
+                      await ShowModalCustom.mostrarDetalhesCliente(
+                        context,
+                        clienteViewModel.clienteSelecionado!,
+                      );
+                    },
                     child: Row(
                       children: [
                         Icon(Icons.contact_page_outlined, size: 21.3),

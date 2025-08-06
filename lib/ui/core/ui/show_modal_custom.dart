@@ -23,57 +23,75 @@ abstract class ShowModalCustom {
               horizontal: 20.0,
               vertical: 25.0,
             ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                FractionallySizedBox(
-                  widthFactor: 0.5,
-                  child: TextFormFieldCustom.buildTextFormField(
-                    initialValue: cliente.codcli.toString(),
-                    labelText: "Código",
-                  ),
-                ),
-                const SizedBox(height: 15),
-                TextFormFieldCustom.buildTextFormField(
-                  initialValue: cliente.cliente,
-                  labelText: "Nome",
-                ),
-                const SizedBox(height: 15),
-                TextFormFieldCustom.buildTextFormField(
-                  initialValue: cliente.fantasia,
-                  labelText: "Nome Fantasia",
-                ),
-                const SizedBox(height: 15),
-                Row(
+            child: ScrollbarTheme(
+              data: ScrollbarThemeData(crossAxisMargin: -10.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Flexible(
-                      child: TextFormFieldCustom.buildTextFormField(
-                        initialValue: cliente.municent,
-                        labelText: "Munícipio",
+                    const SizedBox(height: 15),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close_outlined),
+                    ),
+                    Center(
+                      child: Text(
+                        "Detalhes do Cliente",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    const SizedBox(width: 10),
-                    Flexible(
-                      flex: 2,
+                    const SizedBox(height: 25),
+                    FractionallySizedBox(
+                      widthFactor: 0.5,
                       child: TextFormFieldCustom.buildTextFormField(
-                        initialValue: cliente.enderent,
-                        labelText: "Endereço",
+                        initialValue: cliente.codcli.toString(),
+                        labelText: "Código",
                       ),
                     ),
+                    const SizedBox(height: 15),
+                    TextFormFieldCustom.buildTextFormField(
+                      initialValue: cliente.cliente,
+                      labelText: "Nome",
+                    ),
+                    const SizedBox(height: 15),
+                    TextFormFieldCustom.buildTextFormField(
+                      initialValue: cliente.fantasia,
+                      labelText: "Nome Fantasia",
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: TextFormFieldCustom.buildTextFormField(
+                            initialValue: cliente.municent,
+                            labelText: "Munícipio",
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          flex: 2,
+                          child: TextFormFieldCustom.buildTextFormField(
+                            initialValue: cliente.enderent,
+                            labelText: "Endereço",
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    FractionallySizedBox(
+                      widthFactor: 0.5,
+                      child: TextFormFieldCustom.buildTextFormField(
+                        initialValue: cliente.telent,
+                        labelText: "Telefone",
+                      ),
+                    ),
+                    const SizedBox(height: 15),
                   ],
                 ),
-                const SizedBox(height: 15),
-                FractionallySizedBox(
-                  widthFactor: 0.5,
-                  child: TextFormFieldCustom.buildTextFormField(
-                    initialValue: cliente.telent,
-                    labelText: "Telefone",
-                  ),
-                ),
-                const SizedBox(height: 15),
-
-                const SizedBox(height: 15),
-              ],
+              ),
             ),
           ),
         );
