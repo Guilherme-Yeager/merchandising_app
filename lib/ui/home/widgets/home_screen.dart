@@ -97,18 +97,27 @@ class _HomeScreenState extends State<HomeScreen> {
             if (clienteViewModel.clienteSelecionado != null &&
                 homeViewModel.titleAppBar == "Produtos") ...[
               SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(Icons.contact_page_outlined, size: 21.3),
-                  SizedBox(width: 5),
-                  Text(
-                    "Cliente Selecionado",
-                    style: TextStyle(
-                      fontStyle: FontStyle.italic,
-                      fontSize: 16.0,
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: 0.52,
+                  child: InkWell(
+                    onTap: () {},
+                    child: Row(
+                      children: [
+                        Icon(Icons.contact_page_outlined, size: 21.3),
+                        SizedBox(width: 5),
+                        Text(
+                          "Cliente Selecionado",
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ],
+                ),
               ),
             ],
           ],
