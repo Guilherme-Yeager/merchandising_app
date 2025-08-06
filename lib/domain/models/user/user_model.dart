@@ -19,10 +19,15 @@ class UserModel {
     "email": email,
   };
 
+  /// A desserialização trata os valores nulos colocando valores
+  /// padrão.
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       codusur: json["codusur"],
-      nome: TextHelper.extrairNome(json["nome"]),
+      nome:
+          json["nome"] != null
+              ? TextHelper.extrairNome(json["nome"])
+              : "Sem nome",
       email: json["email"],
     );
   }
