@@ -3,6 +3,7 @@ import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -250,7 +251,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                       children: [
                         Expanded(
                           flex: 40,
-                          child: _buildTextFormField(
+                          child: TextFormFieldCustom.buildTextFormField(
                             initialValue: produto.codprod.toString(),
                             labelText: "Código",
                           ),
@@ -258,7 +259,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         SizedBox(width: 8),
                         Expanded(
                           flex: 60,
-                          child: _buildTextFormField(
+                          child: TextFormFieldCustom.buildTextFormField(
                             initialValue: produto.pvenda.toString(),
                             labelText: "Preço de Venda",
                           ),
@@ -268,14 +269,14 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                     const SizedBox(height: 10),
                     FractionallySizedBox(
                       widthFactor: 0.65,
-                      child: _buildTextFormField(
+                      child: TextFormFieldCustom.buildTextFormField(
                         initialValue: produto.qtest.toInt().toString(),
                         labelText: "Quantidade disponível",
                       ),
                     ),
 
                     const SizedBox(height: 10),
-                    _buildTextFormField(
+                    TextFormFieldCustom.buildTextFormField(
                       initialValue: produto.descricao,
                       labelText: "Descrição",
                       maxLines: 3,
@@ -302,31 +303,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         ),
       );
     }).toList();
-  }
-
-  /// Cria um campo de texto com o valor inicial e o rótulo fornecidos.
-  /// O campo é somente leitura e possui um estilo de rótulo personalizado.
-  TextFormField _buildTextFormField({
-    required String initialValue,
-    required String labelText,
-    int maxLines = 1,
-  }) {
-    return TextFormField(
-      initialValue: initialValue,
-      readOnly: true,
-      maxLines: maxLines,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-    );
   }
 
   /// Inicializa a lista [_expansibleControllers] se ainda não estiver sincronizada

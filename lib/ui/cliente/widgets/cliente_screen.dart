@@ -4,6 +4,7 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 
@@ -231,18 +232,18 @@ class _ClienteScreenState extends State<ClienteScreen> {
                   children: [
                     FractionallySizedBox(
                       widthFactor: 0.5,
-                      child: _buildTextFormField(
+                      child: TextFormFieldCustom.buildTextFormField(
                         initialValue: cliente.codcli.toString(),
                         labelText: "Código",
                       ),
                     ),
                     const SizedBox(height: 15),
-                    _buildTextFormField(
+                    TextFormFieldCustom.buildTextFormField(
                       initialValue: cliente.cliente,
                       labelText: "Nome",
                     ),
                     const SizedBox(height: 15),
-                    _buildTextFormField(
+                    TextFormFieldCustom.buildTextFormField(
                       initialValue: cliente.fantasia,
                       labelText: "Nome Fantasia",
                     ),
@@ -250,7 +251,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     Row(
                       children: [
                         Flexible(
-                          child: _buildTextFormField(
+                          child: TextFormFieldCustom.buildTextFormField(
                             initialValue: cliente.municent,
                             labelText: "Munícipio",
                           ),
@@ -258,7 +259,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         const SizedBox(width: 10),
                         Flexible(
                           flex: 2,
-                          child: _buildTextFormField(
+                          child: TextFormFieldCustom.buildTextFormField(
                             initialValue: cliente.enderent,
                             labelText: "Endereço",
                           ),
@@ -268,7 +269,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     const SizedBox(height: 15),
                     FractionallySizedBox(
                       widthFactor: 0.5,
-                      child: _buildTextFormField(
+                      child: TextFormFieldCustom.buildTextFormField(
                         initialValue: cliente.telent,
                         labelText: "Telefone",
                       ),
@@ -312,29 +313,6 @@ class _ClienteScreenState extends State<ClienteScreen> {
         ),
       );
     }).toList();
-  }
-
-  /// Cria um campo de texto com o valor inicial e o rótulo fornecidos.
-  /// O campo é somente leitura e possui um estilo de rótulo personalizado.
-  TextFormField _buildTextFormField({
-    required String initialValue,
-    required String labelText,
-  }) {
-    return TextFormField(
-      initialValue: initialValue,
-      readOnly: true,
-      decoration: InputDecoration(
-        labelText: labelText,
-        labelStyle: TextStyle(
-          color: Colors.black,
-          fontSize: 18,
-          fontWeight: FontWeight.w700,
-        ),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
-        filled: true,
-        fillColor: Colors.white,
-      ),
-    );
   }
 
   /// Inicializa a lista [_expansibleControllers] se ainda não estiver sincronizada

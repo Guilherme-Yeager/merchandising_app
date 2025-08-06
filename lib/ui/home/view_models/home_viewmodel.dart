@@ -5,7 +5,7 @@ class HomeViewModel extends ChangeNotifier {
   String _titleAppBar = "";
 
   /// Subtítulo da AppBar.
-  String? _subtitleAppBar = "";
+  String? _subtitleAppBar;
 
   String get titleAppBar => _titleAppBar;
   String? get subtitleAppBar => _subtitleAppBar;
