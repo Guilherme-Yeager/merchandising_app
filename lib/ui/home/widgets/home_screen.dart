@@ -75,9 +75,40 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             if (homeViewModel.subtitleAppBar != null) ...[
               SizedBox(height: 4),
-              Text(
-                homeViewModel.subtitleAppBar!,
-                style: TextStyle(fontStyle: FontStyle.italic, fontSize: 16.0),
+              Row(
+                children: [
+                  Icon(
+                    homeViewModel.titleAppBar == "Produtos"
+                        ? Icons.production_quantity_limits_outlined
+                        : Icons.group_outlined,
+                    size: 21.3,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    homeViewModel.subtitleAppBar!,
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+            if (clienteViewModel.clienteSelecionado != null &&
+                homeViewModel.titleAppBar == "Produtos") ...[
+              SizedBox(height: 4),
+              Row(
+                children: [
+                  Icon(Icons.contact_page_outlined, size: 21.3),
+                  SizedBox(width: 5),
+                  Text(
+                    "Cliente Selecionado",
+                    style: TextStyle(
+                      fontStyle: FontStyle.italic,
+                      fontSize: 16.0,
+                    ),
+                  ),
+                ],
               ),
             ],
           ],
