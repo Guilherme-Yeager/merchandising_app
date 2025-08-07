@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';

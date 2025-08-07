@@ -13,12 +13,12 @@ import 'package:merchandising_app/domain/repositories/auth/logout_reppository.da
 import 'package:merchandising_app/domain/repositories/cliente/cliente_repository.dart';
 import 'package:merchandising_app/domain/repositories/pedido/produto_repository.dart';
 import 'package:merchandising_app/domain/repositories/user/user_repository.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
 import 'package:merchandising_app/ui/auth/logout/view_models/logout_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
-import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
+import 'package:merchandising_app/ui/splash/view_models/splash_viewModel.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 
@@ -67,6 +67,7 @@ abstract class ProvidersConfig {
               context,
               listen: false,
             ),
+            userRepository: Provider.of<UserRepository>(context, listen: false),
           ),
     ),
     ChangeNotifierProvider(
@@ -97,6 +98,6 @@ abstract class ProvidersConfig {
           ),
     ),
     ChangeNotifierProvider(create: (_) => HomeViewModel()),
-    ChangeNotifierProvider(create: (_) => SplashViewmodel()),
+    ChangeNotifierProvider(create: (_) => SplashViewModel()),
   ];
 }

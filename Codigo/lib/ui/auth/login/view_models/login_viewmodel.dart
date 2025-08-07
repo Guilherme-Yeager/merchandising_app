@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/domain/models/user/user_model.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
+import 'package:merchandising_app/domain/repositories/user/user_repository.dart';
+import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
+import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// ViewModel responsável por gerenciar o estado de autenticação do usuário.
 class LoginViewModel extends ChangeNotifier {
@@ -12,9 +17,13 @@ class LoginViewModel extends ChangeNotifier {
   UserModel? get userModel => _userModel;
 
   final LoginRepository _loginRepository;
+  final UserRepository _userRepository;
 
-  LoginViewModel({required LoginRepository loginRepository})
-    : _loginRepository = loginRepository;
+  LoginViewModel({
+    required LoginRepository loginRepository,
+    required UserRepository userRepository,
+  }) : _loginRepository = loginRepository,
+       _userRepository = userRepository;
 
   /// Realiza o login do usuário com o e-mail e senha fornecidos.
   ///
@@ -45,5 +54,29 @@ class LoginViewModel extends ChangeNotifier {
       rethrow;
     }
     return logou;
+  }
+
+  Future<void> carregarUsuario() async {
+    final User? user = Supabase.instance.client.auth.currentUser;
+    Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
+    response!["email"] = user.email;
+    _userModel = UserModel.fromJson(response);
+  }
+
+  Future<void> carregarDependencias(
+    ClienteViewModel clienteViewModel,
+    ProdutoViewModel produtoViewModel,
+  ) async {
+    /// Carrega os dados antes de navegar
+    await clienteViewModel.updateClientes(_userModel!.codusur);
+
+    /// Inscreve-se nas alterações em tempo real
+    SupabaseConfig.inscribeRealTimeChangeCliente(
+      clienteViewModel.updateClientes,
+      _userModel!.codusur,
+    );
+    SupabaseConfig.inscribeRealTimeChangeProduto(
+      produtoViewModel.updateProdutos,
+    );
   }
 }

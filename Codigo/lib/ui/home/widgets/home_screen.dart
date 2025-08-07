@@ -1,7 +1,7 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/routing/routes.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';

@@ -29,7 +29,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: Locale('pt', 'BR'),
-      initialRoute: Routes.login,
+      initialRoute: Routes.splash,
       routes: Routes.getRoutes(),
       builder: (_, child) => SafeArea(child: child ?? SizedBox.shrink()),
     );
