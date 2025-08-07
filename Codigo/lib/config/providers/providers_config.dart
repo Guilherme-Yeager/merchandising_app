@@ -11,7 +11,7 @@ import 'package:merchandising_app/data/service/user/user_service.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
 import 'package:merchandising_app/domain/repositories/auth/logout_reppository.dart';
 import 'package:merchandising_app/domain/repositories/cliente/cliente_repository.dart';
-import 'package:merchandising_app/domain/repositories/pedido/produto_repository.dart';
+import 'package:merchandising_app/domain/repositories/produto/produto_repository.dart';
 import 'package:merchandising_app/domain/repositories/user/user_repository.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/auth/logout/view_models/logout_viewmodel.dart';
@@ -67,6 +67,7 @@ abstract class ProvidersConfig {
               context,
               listen: false,
             ),
+            userRepository: Provider.of<UserRepository>(context, listen: false),
           ),
     ),
     ChangeNotifierProvider(
@@ -97,6 +98,6 @@ abstract class ProvidersConfig {
           ),
     ),
     ChangeNotifierProvider(create: (_) => HomeViewModel()),
-    ChangeNotifierProvider(create: (_) => SplashViewmodel()),
+    ChangeNotifierProvider(create: (_) => SplashViewModel()),
   ];
 }

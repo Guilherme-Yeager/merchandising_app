@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
@@ -112,18 +111,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   }
                                   if (logar) {
-                                    /// Carrega os dados antes de navegar
-                                    await clienteViewModel.updateClientes(
-                                      loginViewModel.userModel!.codusur,
-                                    );
-
-                                    /// Inscreve-se nas alterações em tempo real
-                                    SupabaseConfig.inscribeRealTimeChangeCliente(
-                                      clienteViewModel.updateClientes,
-                                      loginViewModel.userModel!.codusur,
-                                    );
-                                    SupabaseConfig.inscribeRealTimeChangeProduto(
-                                      produtoViewModel.updateProdutos,
+                                    await loginViewModel.carregarDependencias(
+                                      clienteViewModel,
+                                      produtoViewModel,
                                     );
                                     if (context.mounted) {
                                       Navigator.pushNamedAndRemoveUntil(

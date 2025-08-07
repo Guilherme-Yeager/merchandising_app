@@ -1,6 +1,7 @@
 import 'package:device_preview/device_preview.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:merchandising_app/config/providers/providers_config.dart';
 import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/routing/routes.dart';
@@ -8,6 +9,10 @@ import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
   await SupabaseConfig.initialize();
   runApp(
     DevicePreview(
@@ -29,7 +34,7 @@ class MainApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       locale: Locale('pt', 'BR'),
-      initialRoute: Routes.login,
+      initialRoute: Routes.splash,
       routes: Routes.getRoutes(),
       builder: (_, child) => SafeArea(child: child ?? SizedBox.shrink()),
     );
