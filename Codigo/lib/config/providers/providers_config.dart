@@ -11,14 +11,14 @@ import 'package:merchandising_app/data/service/user/user_service.dart';
 import 'package:merchandising_app/domain/repositories/auth/login_repository.dart';
 import 'package:merchandising_app/domain/repositories/auth/logout_reppository.dart';
 import 'package:merchandising_app/domain/repositories/cliente/cliente_repository.dart';
-import 'package:merchandising_app/domain/repositories/pedido/produto_repository.dart';
+import 'package:merchandising_app/domain/repositories/produto/produto_repository.dart';
 import 'package:merchandising_app/domain/repositories/user/user_repository.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/auth/logout/view_models/logout_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
-import 'package:merchandising_app/ui/splash/view_models/splash_viewModel.dart';
+import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
 

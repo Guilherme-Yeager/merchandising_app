@@ -12,6 +12,8 @@ class UserRepositoryImpl implements UserRepository {
   ///
   /// - [uuid]: identificador do usuário.
   ///
+  /// Retorna `Map<String, dynamic>` (json) contendo código e
+  /// nome do usuário.
   /// Retorna `null` caso nenhum usuário seja encontrado.
   @override
   Future<Map<String, dynamic>?> getUser(String uuid) async {

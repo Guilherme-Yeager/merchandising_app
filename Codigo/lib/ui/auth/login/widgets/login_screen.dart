@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/routing/routes.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';

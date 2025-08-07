@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/routing/routes.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewModel.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
-import 'package:merchandising_app/ui/splash/view_models/splash_viewModel.dart';
+import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
 import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -23,12 +24,15 @@ class _SplashScreenState extends State<SplashScreen> {
     });
   }
 
+  /// Possibiliza o usuário acessar o sistema sem precisar fazer
+  /// login caso haja uma sessão válida e carrega as dependências.
+  /// Caso contrário, navega para tela de login.
   void inicializarAplicativo() async {
     final SplashViewModel splashViewModel = Provider.of<SplashViewModel>(
       context,
       listen: false,
     );
-    if (splashViewModel.estaLogado()) {
+    if (splashViewModel.sessaoEstaValida()) {
       final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
         context,
         listen: false,
@@ -52,6 +56,9 @@ class _SplashScreenState extends State<SplashScreen> {
           Routes.home,
           (Route<dynamic> route) => false,
         );
+        AppLogger.instance.i(
+          "Sessão válida: usuário entrou no sistema sem precisar fazer login.",
+        );
       }
     } else {
       Navigator.pushNamedAndRemoveUntil(
@@ -59,6 +66,7 @@ class _SplashScreenState extends State<SplashScreen> {
         Routes.login,
         (Route<dynamic> route) => false,
       );
+      AppLogger.instance.i("Sessão inválida: Usuário precisa fazer login.");
     }
   }
 

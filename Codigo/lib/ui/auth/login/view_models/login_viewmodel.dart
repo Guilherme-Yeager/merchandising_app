@@ -56,6 +56,10 @@ class LoginViewModel extends ChangeNotifier {
     return logou;
   }
 
+  /// Carrega informações do usuário com sessão ativa, acessando o
+  /// shared_preferences e obtendo informações do mesmo.
+  /// Ao final `_userModel` será o usuário da aplicação sem precisar
+  /// fazer login.
   Future<void> carregarUsuario() async {
     final User? user = Supabase.instance.client.auth.currentUser;
     Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
@@ -63,14 +67,19 @@ class LoginViewModel extends ChangeNotifier {
     _userModel = UserModel.fromJson(response);
   }
 
+  /// Carrega as dependências do sistema, onde atualiza a lista de
+  /// clientes e inscreve-se em canais de tempo real para as tabelas
+  /// `pcclient` e `pcprodut`
+  ///
+  /// - [clienteViewModel]: é a classe que possui a funcionalidade de
+  /// atualização dos clientes.
+  /// - [produtoViewModel]: é a classe que possui a funcionalidade de
+  /// atualização dos produtos.
   Future<void> carregarDependencias(
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
   ) async {
-    /// Carrega os dados antes de navegar
     await clienteViewModel.updateClientes(_userModel!.codusur);
-
-    /// Inscreve-se nas alterações em tempo real
     SupabaseConfig.inscribeRealTimeChangeCliente(
       clienteViewModel.updateClientes,
       _userModel!.codusur,
