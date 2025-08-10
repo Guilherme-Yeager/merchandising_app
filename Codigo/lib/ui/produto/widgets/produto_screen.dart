@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
@@ -7,6 +8,8 @@ import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
+import 'package:quickalert/models/quickalert_type.dart';
+import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ProdutoScreen extends StatefulWidget {
   const ProdutoScreen({super.key});
@@ -284,7 +287,129 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                     const SizedBox(height: 15),
                     Center(
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          int quantidade = 1;
+                          const int maxValor = 9999999;
+                          final TextEditingController quantidadeController =
+                              TextEditingController(
+                                text: quantidade.toString(),
+                              );
+                          await QuickAlert.show(
+                            context: context,
+                            type: QuickAlertType.custom,
+                            widget: StatefulBuilder(
+                              builder: (context, setState) {
+                                return Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text(
+                                      'Produto ${produto.codprod}',
+                                      style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 8),
+                                    const Text('Quantidade'),
+                                    const SizedBox(height: 12),
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.remove_circle,
+                                            color: Colors.blue,
+                                            size: 32,
+                                          ),
+                                          onPressed: () {
+                                            if (quantidade > 1) {
+                                              setState(() {
+                                                quantidade--;
+                                                quantidadeController.text =
+                                                    quantidade.toString();
+                                              });
+                                            }
+                                          },
+                                        ),
+                                        SizedBox(
+                                          width: 100,
+                                          child: TextField(
+                                            controller: quantidadeController,
+                                            textAlign: TextAlign.center,
+                                            keyboardType: TextInputType.number,
+                                            inputFormatters: [
+                                              LengthLimitingTextInputFormatter(
+                                                7,
+                                              ),
+                                              FilteringTextInputFormatter
+                                                  .digitsOnly,
+                                            ],
+                                            onChanged: (value) {
+                                              int novoValor =
+                                                  int.tryParse(value) ?? 1;
+                                              if (novoValor != quantidade) {
+                                                quantidade = novoValor;
+                                              }
+                                              quantidadeController.text =
+                                                  quantidade.toString();
+                                              quantidadeController.selection =
+                                                  TextSelection.collapsed(
+                                                    offset:
+                                                        quantidadeController
+                                                            .text
+                                                            .length,
+                                                  );
+                                              setState(() {});
+                                            },
+                                            decoration: InputDecoration(
+                                              contentPadding:
+                                                  const EdgeInsets.symmetric(
+                                                    vertical: 8,
+                                                  ),
+                                              border: OutlineInputBorder(
+                                                borderRadius:
+                                                    BorderRadius.circular(10),
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                        IconButton(
+                                          icon: const Icon(
+                                            Icons.add_circle,
+                                            color: Colors.blue,
+                                            size: 32,
+                                          ),
+                                          onPressed: () {
+                                            if (quantidade < maxValor) {
+                                              setState(() {
+                                                quantidade++;
+                                                quantidadeController.text =
+                                                    quantidade.toString();
+                                                quantidadeController.selection =
+                                                    TextSelection.collapsed(
+                                                      offset:
+                                                          quantidadeController
+                                                              .text
+                                                              .length,
+                                                    );
+                                              });
+                                            }
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                  ],
+                                );
+                              },
+                            ),
+                            confirmBtnText: "Confirmar",
+                            onConfirmBtnTap: () {
+                              FocusScope.of(context).unfocus();
+                              Navigator.pop(context);
+                            },
+                          );
+                        },
                         style: ElevatedButton.styleFrom(
                           shape: const CircleBorder(),
                           padding: const EdgeInsets.all(20),
