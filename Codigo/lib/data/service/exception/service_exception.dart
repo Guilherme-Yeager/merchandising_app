@@ -44,7 +44,9 @@ class ServiceException implements Exception {
   static TipoErro _detectarTipoErro(dynamic exception) {
     final mensagem = exception.toString().toLowerCase();
 
-    if (exception is SocketException) {
+    if (exception is SocketException ||
+        mensagem.contains('SocketException') ||
+        mensagem.contains('Failed host lookup')) {
       return TipoErro.offline;
     }
     if (exception is TimeoutException) {

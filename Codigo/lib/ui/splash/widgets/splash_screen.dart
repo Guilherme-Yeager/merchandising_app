@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
+import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -45,11 +47,24 @@ class _SplashScreenState extends State<SplashScreen> {
         context,
         listen: false,
       );
-      await loginViewModel.carregarUsuario();
-      await loginViewModel.carregarDependencias(
-        clienteViewModel,
-        produtoViewModel,
-      );
+      try {
+        await loginViewModel.carregarUsuario();
+        await loginViewModel.carregarDependencias(
+          clienteViewModel,
+          produtoViewModel,
+        );
+      } on ServiceException catch (exception) {
+        if (exception.tipo == TipoErro.offline) {
+          await Future.delayed(Duration(seconds: 1));
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (_) => OfflineScreen()),
+            );
+          }
+        }
+        return;
+      }
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(
           context,

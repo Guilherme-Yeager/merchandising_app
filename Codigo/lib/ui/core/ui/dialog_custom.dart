@@ -6,6 +6,7 @@ abstract class DialogCustom {
   static Future<dynamic> showDialogInfo({
     required String title,
     required String message,
+    String messageBtn = "OK",
     required BuildContext context,
   }) {
     return QuickAlert.show(
@@ -13,7 +14,7 @@ abstract class DialogCustom {
       type: QuickAlertType.info,
       title: title,
       text: message,
-      confirmBtnText: "OK",
+      confirmBtnText: messageBtn,
       onConfirmBtnTap: () => Navigator.of(context).pop(true),
       onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
@@ -22,6 +23,7 @@ abstract class DialogCustom {
   static Future<dynamic> showDialogWarning({
     required String title,
     required String message,
+    String messageBtn = "OK",
     required BuildContext context,
   }) {
     return QuickAlert.show(
@@ -29,7 +31,7 @@ abstract class DialogCustom {
       type: QuickAlertType.warning,
       title: title,
       text: message,
-      confirmBtnText: "OK",
+      confirmBtnText: messageBtn,
       onConfirmBtnTap: () => Navigator.of(context).pop(true),
       onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
@@ -38,6 +40,7 @@ abstract class DialogCustom {
   static Future<dynamic> showDialogSuccess({
     String title = "Sucesso",
     required String message,
+    String messageBtn = "OK",
     required BuildContext context,
   }) {
     return QuickAlert.show(
@@ -45,7 +48,7 @@ abstract class DialogCustom {
       type: QuickAlertType.success,
       title: title,
       text: message,
-      confirmBtnText: "OK",
+      confirmBtnText: messageBtn,
       onConfirmBtnTap: () => Navigator.of(context).pop(true),
       onCancelBtnTap: () => Navigator.of(context).pop(false),
     );
@@ -54,6 +57,7 @@ abstract class DialogCustom {
   static Future<dynamic> showDialogError({
     String title = "Oops...",
     required String message,
+    String messageBtn = "OK",
     required BuildContext context,
   }) {
     return QuickAlert.show(
@@ -61,7 +65,7 @@ abstract class DialogCustom {
       type: QuickAlertType.error,
       title: title,
       text: message,
-      confirmBtnText: "OK",
+      confirmBtnText: messageBtn,
       onConfirmBtnTap: () => Navigator.of(context).pop(true),
       onCancelBtnTap: () => Navigator.of(context).pop(false),
     );

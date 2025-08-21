@@ -62,9 +62,13 @@ class LoginViewModel extends ChangeNotifier {
   /// fazer login.
   Future<void> carregarUsuario() async {
     final User? user = Supabase.instance.client.auth.currentUser;
-    Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
-    response!["email"] = user.email;
-    _userModel = UserModel.fromJson(response);
+    try {
+      Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
+      response!["email"] = user.email;
+      _userModel = UserModel.fromJson(response);
+    } on ServiceException {
+      rethrow;
+    }
   }
 
   /// Carrega as dependências do sistema, onde atualiza a lista de
