@@ -25,6 +25,8 @@ class _ClienteScreenState extends State<ClienteScreen> {
   List<ExpansibleController> _expansibleControllers = [];
   int? _clienteSelecionado;
 
+  bool seleciouCliente = false;
+
   @override
   Widget build(BuildContext context) {
     /// Providers
@@ -278,6 +280,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
+                          setState(() {
+                            seleciouCliente = !seleciouCliente;
+                          });
+
                           /// Atualiza os produtos
                           await produtoViewModel.updateProdutos();
 
@@ -290,6 +296,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           AppLogger.instance.i(
                             "Cliente selecionado: ${cliente.codcli}",
                           );
+                          setState(() {
+                            seleciouCliente = !seleciouCliente;
+                          });
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.buttonLogin,
@@ -298,10 +307,22 @@ class _ClienteScreenState extends State<ClienteScreen> {
                             vertical: 16,
                           ),
                         ),
-                        child: const Text(
-                          "Novo",
-                          style: TextStyle(color: Colors.white, fontSize: 16),
-                        ),
+                        child:
+                            seleciouCliente
+                                ? SizedBox(
+                                  height: 23,
+                                  width: 23,
+                                  child: const CircularProgressIndicator(
+                                    color: Colors.white,
+                                  ),
+                                )
+                                : const Text(
+                                  "Novo",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16,
+                                  ),
+                                ),
                       ),
                     ),
                     const SizedBox(height: 15),
