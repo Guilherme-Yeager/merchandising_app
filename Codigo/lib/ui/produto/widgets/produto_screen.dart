@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
@@ -37,6 +38,10 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
       context,
       listen: false,
     );
+    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
+      context,
+      listen: false,
+    );
     final ProdutoViewModel produtoViewModel = Provider.of<ProdutoViewModel>(
       context,
     );
@@ -45,6 +50,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     final List<Card> produtos = _getProdutos(
       clienteViewModel,
       produtoViewModel,
+      loginViewModel,
     );
 
     return Scaffold(
@@ -173,6 +179,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   List<Card> _getProdutos(
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
+    LoginViewModel loginViewModel,
   ) {
     List<ProdutoModel> produtos = produtoViewModel.produtosComFiltro;
     if (produtos.isEmpty) {
@@ -403,10 +410,29 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                 );
                               },
                             ),
-                            confirmBtnText: "Confirmar",
-                            onConfirmBtnTap: () {
+                            confirmBtnText: "Salvar",
+                            onConfirmBtnTap: () async {
                               FocusScope.of(context).unfocus();
-                              Navigator.pop(context);
+
+                              /// Modelo do cabeçalho do pedido
+                              // PedcabModel pedcabModel = PedcabModel(
+                              //   dataPedido: DateFormat.yMMMd().format(DateTime.now()),
+                              //   codigoVendedor:
+                              //       loginViewModel.userModel!.codusur
+                              //           .toString(),
+                              //   codigoCliente:
+                              //       clienteViewModel.clienteSelecionado!.codcli
+                              //           .toString(),
+                              // );
+
+                              // final int codigoPedido = await produtoViewModel
+                              //    .inserirCabecalhoPedido(pedcabModel);
+
+                              /// Modelo do corpo do pedido
+
+                              if (mounted) {
+                                Navigator.pop(context);
+                              }
                             },
                           );
                         },
