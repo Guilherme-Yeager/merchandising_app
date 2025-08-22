@@ -20,7 +20,7 @@ void main() async {
   await SupabaseConfig.initialize();
   runApp(
     DevicePreview(
-      enabled: kReleaseMode,
+      enabled: !kReleaseMode,
       builder:
           (_) => MultiProvider(
             providers: ProvidersConfig.providers,
