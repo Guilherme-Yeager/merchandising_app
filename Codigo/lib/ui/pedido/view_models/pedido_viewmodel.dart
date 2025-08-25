@@ -5,7 +5,8 @@ import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/repositories/pedido/pedido_repository.dart';
 
 class PedidoViewModel extends ChangeNotifier {
-  /// Indica se um pedido foi salvo na base de dados;
+  /// Indica se um pedido foi salvo na base de dados, utilizada para informar
+  /// o sucesso da operação.
   bool salvouPedido = false;
 
   final PedidoRepository _pedidoRepository;
@@ -41,11 +42,15 @@ class PedidoViewModel extends ChangeNotifier {
     }
   }
 
+  /// Altera o valor de [salvouPedido] para `true` indicando que um pedido foi salvo
+  /// com sucesso na base de dados.
   void salvarPedido() {
     salvouPedido = true;
     notifyListeners();
   }
 
+  /// Altera o valor de [salvouPedido] para `false` indicando que o usuário foi informado
+  /// sobre a operação do pedido salvo com sucesso.
   void desmarcarPedido() {
     salvouPedido = false;
     notifyListeners();

@@ -183,17 +183,15 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     );
   }
 
-  void retornaScreenCliente(
-    HomeViewModel homeViewModel,
-    ClienteViewModel clienteViewModel,
-  ) {
-    homeViewModel.updateTitleAppBar("Clientes");
-    clienteViewModel.limparClienteSelecionado();
-    homeViewModel.updateSubtitleAppBar(
-      "Total: ${clienteViewModel.clientesComFiltro.length}",
-    );
-  }
-
+  /// Responsável por construir os cards dos produtos a serem exibidos.
+  ///
+  /// - [clienteViewModel] é a ViewModel do Cliente.
+  /// - [produtoViewModel] é a ViewModel do Produto.
+  /// - [loginViewModel] é a ViewModel de Login.
+  /// - [homeViewModel] é a ViewModel de Home.
+  /// - [pedidoViewModel] é a ViewModel de Pedido.
+  ///
+  /// Retorna uma lista de cards, sendo cada um deles, um produto da base de dados.
   List<Card> _getProdutos(
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
@@ -482,7 +480,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                 pedcorpModel,
                               );
 
-                              clienteViewModel.limparClienteSelecionado();
                               if (mounted) {
                                 Navigator.pop(context);
                                 pedidoViewModel.salvarPedido();
@@ -525,5 +522,18 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         (_) => ExpansibleController(),
       );
     }
+  }
+
+  /// Faz a configuração necessária para o conteúdo principal a ser exibido seja a
+  /// tela de clientes.
+  void retornaScreenCliente(
+    HomeViewModel homeViewModel,
+    ClienteViewModel clienteViewModel,
+  ) {
+    homeViewModel.updateTitleAppBar("Clientes");
+    clienteViewModel.limparClienteSelecionado();
+    homeViewModel.updateSubtitleAppBar(
+      "Total: ${clienteViewModel.clientesComFiltro.length}",
+    );
   }
 }
