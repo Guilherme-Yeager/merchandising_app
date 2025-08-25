@@ -27,6 +27,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController senhaController = TextEditingController();
 
   bool _loading = false;
+  bool _mostrarSenha = false;
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +77,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           TextFormField(
                             controller: senhaController,
                             decoration: _inputStyle("Senha"),
-                            obscureText: true,
+                            obscureText: !_mostrarSenha,
                             inputFormatters: [
                               LengthLimitingTextInputFormatter(8),
                             ],
@@ -174,6 +175,21 @@ class _LoginScreenState extends State<LoginScreen> {
         color: AppColors.textError,
         fontWeight: FontWeight.bold,
       ),
+      suffixIcon:
+          label == "Senha"
+              ? IconButton(
+                iconSize: 24,
+                icon: Icon(
+                  _mostrarSenha ? Icons.visibility : Icons.visibility_off,
+                  color:
+                      _mostrarSenha
+                          ? AppColors.gradientStart
+                          : AppColors.gradientEnd,
+                ),
+                color: AppColors.placeholder,
+                onPressed: () => setState(() => _mostrarSenha = !_mostrarSenha),
+              )
+              : null,
     );
   }
 }
