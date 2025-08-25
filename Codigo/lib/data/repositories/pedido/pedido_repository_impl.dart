@@ -21,10 +21,9 @@ class PedidoRepositoryImpl implements PedidoRepository {
   @override
   Future<bool> inserirCorpo(PedcorpModel pedcorpModel) async {
     try {
-      await pedidoService.insertPedCorp(pedcorpModel);
+      return await pedidoService.insertPedCorp(pedcorpModel);
     } on ServiceException {
       rethrow;
     }
-    return true;
   }
 }

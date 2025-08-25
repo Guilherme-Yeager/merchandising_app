@@ -4,7 +4,6 @@ import 'package:intl/intl.dart';
 import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
 import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
-import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
@@ -452,6 +451,10 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                 "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
                               );
 
+                              /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
+                              final int codigoPedido = await pedidoViewModel
+                                  .inserirCabecalhoPedido(pedcabModel);
+
                               double? precoVenda = await produtoViewModel
                                   .getPrecoVenda(produto.codprod);
                               if (precoVenda == null) {
@@ -463,7 +466,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
                               /// Modelo do corpo do pedido
                               PedcorpModel pedcorpModel = PedcorpModel(
-                                codigoPedido: 1,
+                                codigoPedido: codigoPedido,
                                 codigoProduto: produto.codprod.toString(),
                                 quantidade: quantidade,
                                 precoVenda: precoVenda,
@@ -472,6 +475,11 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
 
                               AppLogger.instance.i(
                                 "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
+                              );
+
+                              /// Inserindo corpo do pedido.
+                              await pedidoViewModel.inserirCorpoPedido(
+                                pedcorpModel,
                               );
 
                               clienteViewModel.limparClienteSelecionado();

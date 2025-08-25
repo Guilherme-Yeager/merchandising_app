@@ -45,16 +45,16 @@ class PedidoService {
   /// sobre o tipo de erro ocorrido.
   Future<bool> insertPedCorp(PedcorpModel pedcorpModel) async {
     try {
-      await Supabase.instance.client.from('polibras_pedcab').insert({
+      await Supabase.instance.client.from('polibras_pedcorp').insert({
         'codigo_pedido': pedcorpModel.codigoPedido,
         'codigo_produto': pedcorpModel.codigoProduto,
         'quantidade': pedcorpModel.quantidade,
-        'preco_venda': pedcorpModel.precoVenda,
-        'preco_base': pedcorpModel.precoBase,
+        'preco_venda': pedcorpModel.precoVenda.toInt(),
+        'preco_base': pedcorpModel.precoBase.toInt(),
       });
+      return true;
     } on Exception catch (exception) {
       throw ServiceException(exception);
     }
-    return true;
   }
 }
