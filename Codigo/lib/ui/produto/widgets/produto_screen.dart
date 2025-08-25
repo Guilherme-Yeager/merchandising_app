@@ -32,6 +32,8 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   List<ExpansibleController> _expansibleControllers = [];
   int? _produtoSelecionado;
 
+  bool salvandoPedido = false;
+
   @override
   Widget build(BuildContext context) {
     /// ViewModels
@@ -429,66 +431,89 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                               },
                             ),
                             confirmBtnText: "Salvar",
-                            onConfirmBtnTap: () async {
-                              FocusScope.of(context).unfocus();
+                            onConfirmBtnTap:
+                                salvandoPedido
+                                    ? null
+                                    : () async {
+                                      /// Se já estiver salvando um pedido não vai salvar
+                                      /// novamente ao mesmo tempo.
+                                      if (salvandoPedido) {
+                                        return;
+                                      }
+                                      FocusScope.of(context).unfocus();
 
-                              /// Modelo do cabeçalho do pedido
-                              PedcabModel pedcabModel = PedcabModel(
-                                dataPedido: DateFormat(
-                                  'dd/MM/yyyy',
-                                ).format(DateTime.now()),
-                                codigoVendedor:
-                                    loginViewModel.userModel!.codusur
-                                        .toString(),
-                                codigoCliente:
-                                    clienteViewModel.clienteSelecionado!.codcli
-                                        .toString(),
-                              );
+                                      setState(() {
+                                        salvandoPedido = !salvandoPedido;
+                                      });
 
-                              AppLogger.instance.i(
-                                "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
-                              );
+                                      /// Modelo do cabeçalho do pedido
+                                      PedcabModel pedcabModel = PedcabModel(
+                                        dataPedido: DateFormat(
+                                          'dd/MM/yyyy',
+                                        ).format(DateTime.now()),
+                                        codigoVendedor:
+                                            loginViewModel.userModel!.codusur
+                                                .toString(),
+                                        codigoCliente:
+                                            clienteViewModel
+                                                .clienteSelecionado!
+                                                .codcli
+                                                .toString(),
+                                      );
 
-                              /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
-                              final int codigoPedido = await pedidoViewModel
-                                  .inserirCabecalhoPedido(pedcabModel);
+                                      AppLogger.instance.i(
+                                        "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
+                                      );
 
-                              double? precoVenda = await produtoViewModel
-                                  .getPrecoVenda(produto.codprod);
-                              if (precoVenda == null) {
-                                AppLogger.instance.w(
-                                  "O produto não possui preço de venda.",
-                                );
-                                precoVenda = 0;
-                              }
+                                      /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
+                                      final int codigoPedido =
+                                          await pedidoViewModel
+                                              .inserirCabecalhoPedido(
+                                                pedcabModel,
+                                              );
 
-                              /// Modelo do corpo do pedido
-                              PedcorpModel pedcorpModel = PedcorpModel(
-                                codigoPedido: codigoPedido,
-                                codigoProduto: produto.codprod.toString(),
-                                quantidade: quantidade,
-                                precoVenda: precoVenda,
-                                precoBase: precoVenda,
-                              );
+                                      double? precoVenda =
+                                          await produtoViewModel.getPrecoVenda(
+                                            produto.codprod,
+                                          );
+                                      if (precoVenda == null) {
+                                        AppLogger.instance.w(
+                                          "O produto não possui preço de venda.",
+                                        );
+                                        precoVenda = 0;
+                                      }
 
-                              AppLogger.instance.i(
-                                "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
-                              );
+                                      /// Modelo do corpo do pedido
+                                      PedcorpModel pedcorpModel = PedcorpModel(
+                                        codigoPedido: codigoPedido,
+                                        codigoProduto:
+                                            produto.codprod.toString(),
+                                        quantidade: quantidade,
+                                        precoVenda: precoVenda,
+                                        precoBase: precoVenda,
+                                      );
 
-                              /// Inserindo corpo do pedido.
-                              await pedidoViewModel.inserirCorpoPedido(
-                                pedcorpModel,
-                              );
+                                      AppLogger.instance.i(
+                                        "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
+                                      );
 
-                              if (mounted) {
-                                Navigator.pop(context);
-                                pedidoViewModel.salvarPedido();
-                                retornaScreenCliente(
-                                  homeViewModel,
-                                  clienteViewModel,
-                                );
-                              }
-                            },
+                                      /// Inserindo corpo do pedido.
+                                      await pedidoViewModel.inserirCorpoPedido(
+                                        pedcorpModel,
+                                      );
+
+                                      setState(() {
+                                        salvandoPedido = !salvandoPedido;
+                                      });
+                                      if (mounted) {
+                                        Navigator.pop(context);
+                                        pedidoViewModel.salvarPedido();
+                                        retornaScreenCliente(
+                                          homeViewModel,
+                                          clienteViewModel,
+                                        );
+                                      }
+                                    },
                           );
                         },
                         style: ElevatedButton.styleFrom(

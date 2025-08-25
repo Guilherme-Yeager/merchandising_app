@@ -4,7 +4,6 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/auth/logout/widgets/logout_screen.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
-import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
 import 'package:provider/provider.dart';
 
