@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/ui/auth/login/widgets/login_screen.dart';
 import 'package:merchandising_app/ui/menu/widgets/menu_screen.dart';
-import 'package:merchandising_app/ui/menu/widgets/perfil_screen.dart';
 import 'package:merchandising_app/ui/home/widgets/home_screen.dart';
 import 'package:merchandising_app/ui/cliente/widgets/cliente_screen.dart';
 import 'package:merchandising_app/ui/produto/widgets/produto_screen.dart';
@@ -23,7 +22,6 @@ abstract class Routes {
       home: (context) => HomeScreen(),
       menu: (context) => MenuScreen(),
       cliente: (context) => ClienteScreen(),
-      perfil: (context) => PerfilScreen(),
       produto: (context) => ProdutoScreen(),
     };
   }

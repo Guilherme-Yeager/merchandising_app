@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/config/supabase/supabase_config.dart';
+import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/auth/logout/widgets/logout_screen.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
+import 'package:provider/provider.dart';
 
 class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
@@ -14,8 +18,14 @@ class MenuScreen extends StatefulWidget {
 class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
+    /// ViewModels
+    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
+      context,
+      listen: false,
+    );
+
     // Cards
-    final List<InkWell> cards = _getInkWells();
+    final List<InkWell> cards = _getInkWells(loginViewModel);
 
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -35,11 +45,18 @@ class _MenuScreenState extends State<MenuScreen> {
     );
   }
 
-  /// Retorna uma lista de `InkWell` que são `Cards` clicáveis que representam as opções do menu.
-  List<InkWell> _getInkWells() {
+  /// Retorna uma lista de `InkWell` que são `Cards` clicáveis que representam
+  /// as opções do menu.
+  ///
+  /// - [loginViewModel] é  ViewModel de login
+  List<InkWell> _getInkWells(LoginViewModel loginViewModel) {
     return [
       InkWell(
         onTap: () {
+          ShowModalCustom.mostrarDetalhesUsuario(
+            context,
+            loginViewModel.userModel!,
+          );
           AppLogger.instance.i("Opcão 'Meus dados' selecionada.");
         },
         child: Card(
