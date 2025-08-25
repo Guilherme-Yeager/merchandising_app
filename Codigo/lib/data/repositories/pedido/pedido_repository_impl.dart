@@ -10,13 +10,12 @@ class PedidoRepositoryImpl implements PedidoRepository {
   PedidoRepositoryImpl({required this.pedidoService});
 
   @override
-  Future<bool> inserirCabecalho(PedcabModel pedcabModel) async {
+  Future<int> inserirCabecalho(PedcabModel pedcabModel) async {
     try {
-      await pedidoService.insertPedCab(pedcabModel);
+      return await pedidoService.insertPedCab(pedcabModel);
     } on ServiceException {
       rethrow;
     }
-    return true;
   }
 
   @override

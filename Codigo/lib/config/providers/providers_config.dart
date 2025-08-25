@@ -20,6 +20,7 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/auth/logout/view_models/logout_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
+import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
 import 'package:provider/provider.dart';
@@ -101,6 +102,15 @@ abstract class ProvidersConfig {
       create:
           (context) => ProdutoViewModel(
             produtoRepistory: Provider.of<ProdutoRepository>(
+              context,
+              listen: false,
+            ),
+          ),
+    ),
+    ChangeNotifierProvider(
+      create:
+          (context) => PedidoViewModel(
+            pedidoRepository: Provider.of<PedidoRepository>(
               context,
               listen: false,
             ),

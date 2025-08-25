@@ -4,8 +4,10 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
+import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 
 import 'package:provider/provider.dart';
@@ -26,6 +28,24 @@ class _ClienteScreenState extends State<ClienteScreen> {
   int? _clienteSelecionado;
 
   bool seleciouCliente = false;
+
+  @override
+  void initState() {
+    super.initState();
+    final PedidoViewModel pedidoViewModel = Provider.of<PedidoViewModel>(
+      context,
+      listen: false,
+    );
+    WidgetsBinding.instance.addPostFrameCallback((_) async {
+      if (pedidoViewModel.salvouPedido) {
+        await DialogCustom.showDialogSuccess(
+          message: "Pedido salvo na base de dados",
+          context: context,
+        );
+        pedidoViewModel.desmarcarPedido();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

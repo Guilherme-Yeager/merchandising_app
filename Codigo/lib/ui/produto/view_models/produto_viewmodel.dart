@@ -61,24 +61,9 @@ class ProdutoViewModel extends ChangeNotifier {
   /// Retorna o preço de venda do produto em caso de sucesso. Já caso ocorra
   /// algum erro durante o insert, uma [ServiceException] será lançada contendo
   /// informações sobre o tipo de erro ocorrido.
-  Future<double> getPrecoVenda(int codProd) async {
+  Future<double?> getPrecoVenda(int codProd) async {
     try {
-      return 1;
-    } on ServiceException {
-      rethrow;
-    }
-  }
-
-  /// Busca o preço base do produto.
-  ///
-  /// - [codProd]: código de produto do cliente.
-  ///
-  /// Retorna o preço base do produto em caso de sucesso. Já caso ocorra
-  /// algum erro durante o insert, uma [ServiceException] será lançada contendo
-  /// informações sobre o tipo de erro ocorrido.
-  Future<double> getPrecoBase(int codProd) async {
-    try {
-      return 1;
+      return _produtoRepository.getPrecoVenda(codProd);
     } on ServiceException {
       rethrow;
     }

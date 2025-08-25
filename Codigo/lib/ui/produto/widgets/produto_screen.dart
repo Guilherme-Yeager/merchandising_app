@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:intl/intl.dart';
+import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
+import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
+import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
+import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:quickalert/models/quickalert_type.dart';
@@ -45,12 +51,18 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     final ProdutoViewModel produtoViewModel = Provider.of<ProdutoViewModel>(
       context,
     );
+    final PedidoViewModel pedidoViewModel = Provider.of<PedidoViewModel>(
+      context,
+      listen: false,
+    );
 
     /// Cards com informações dos produtos
     final List<Card> produtos = _getProdutos(
       clienteViewModel,
       produtoViewModel,
       loginViewModel,
+      homeViewModel,
+      pedidoViewModel,
     );
 
     return Scaffold(
@@ -74,11 +86,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                     ).then((result) {
                       if (result == true) {
                         if (context.mounted) {
-                          homeViewModel.updateTitleAppBar("Clientes");
-                          clienteViewModel.limparClienteSelecionado();
-                          homeViewModel.updateSubtitleAppBar(
-                            "Total: ${clienteViewModel.clientesComFiltro.length}",
-                          );
+                          retornaScreenCliente(homeViewModel, clienteViewModel);
                         }
                       }
                     });
@@ -176,10 +184,23 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
     );
   }
 
+  void retornaScreenCliente(
+    HomeViewModel homeViewModel,
+    ClienteViewModel clienteViewModel,
+  ) {
+    homeViewModel.updateTitleAppBar("Clientes");
+    clienteViewModel.limparClienteSelecionado();
+    homeViewModel.updateSubtitleAppBar(
+      "Total: ${clienteViewModel.clientesComFiltro.length}",
+    );
+  }
+
   List<Card> _getProdutos(
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
     LoginViewModel loginViewModel,
+    HomeViewModel homeViewModel,
+    PedidoViewModel pedidoViewModel,
   ) {
     List<ProdutoModel> produtos = produtoViewModel.produtosComFiltro;
     if (produtos.isEmpty) {
@@ -415,23 +436,52 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                               FocusScope.of(context).unfocus();
 
                               /// Modelo do cabeçalho do pedido
-                              // PedcabModel pedcabModel = PedcabModel(
-                              //   dataPedido: DateFormat.yMMMd().format(DateTime.now()),
-                              //   codigoVendedor:
-                              //       loginViewModel.userModel!.codusur
-                              //           .toString(),
-                              //   codigoCliente:
-                              //       clienteViewModel.clienteSelecionado!.codcli
-                              //           .toString(),
-                              // );
+                              PedcabModel pedcabModel = PedcabModel(
+                                dataPedido: DateFormat(
+                                  'dd/MM/yyyy',
+                                ).format(DateTime.now()),
+                                codigoVendedor:
+                                    loginViewModel.userModel!.codusur
+                                        .toString(),
+                                codigoCliente:
+                                    clienteViewModel.clienteSelecionado!.codcli
+                                        .toString(),
+                              );
 
-                              // final int codigoPedido = await produtoViewModel
-                              //    .inserirCabecalhoPedido(pedcabModel);
+                              AppLogger.instance.i(
+                                "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
+                              );
+
+                              double? precoVenda = await produtoViewModel
+                                  .getPrecoVenda(produto.codprod);
+                              if (precoVenda == null) {
+                                AppLogger.instance.w(
+                                  "O produto não possui preço de venda.",
+                                );
+                                precoVenda = 0;
+                              }
 
                               /// Modelo do corpo do pedido
+                              PedcorpModel pedcorpModel = PedcorpModel(
+                                codigoPedido: 1,
+                                codigoProduto: produto.codprod.toString(),
+                                quantidade: quantidade,
+                                precoVenda: precoVenda,
+                                precoBase: precoVenda,
+                              );
 
+                              AppLogger.instance.i(
+                                "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
+                              );
+
+                              clienteViewModel.limparClienteSelecionado();
                               if (mounted) {
                                 Navigator.pop(context);
+                                pedidoViewModel.salvarPedido();
+                                retornaScreenCliente(
+                                  homeViewModel,
+                                  clienteViewModel,
+                                );
                               }
                             },
                           );

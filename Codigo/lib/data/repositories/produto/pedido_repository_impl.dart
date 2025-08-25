@@ -17,4 +17,13 @@ class ProdutoRepositoryImpl implements ProdutoRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<double?> getPrecoVenda(int codProd) async {
+    try {
+      return produtoService.getPrecoVenda(codProd);
+    } on ServiceException {
+      rethrow;
+    }
+  }
 }
