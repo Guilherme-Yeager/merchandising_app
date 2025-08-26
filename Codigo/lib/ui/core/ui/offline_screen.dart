@@ -1,8 +1,16 @@
+import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 
-class OfflineScreen extends StatelessWidget {
+class OfflineScreen extends StatefulWidget {
   const OfflineScreen({super.key});
+
+  @override
+  State<OfflineScreen> createState() => _OfflineScreenState();
+}
+
+class _OfflineScreenState extends State<OfflineScreen> {
+  bool _verificandoInternet = false;
 
   @override
   Widget build(BuildContext context) {
@@ -36,8 +44,30 @@ class OfflineScreen extends StatelessWidget {
                 textAlign: TextAlign.justify,
               ),
               const SizedBox(height: 40),
+              if (_verificandoInternet) ...[
+                SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: const CircularProgressIndicator(color: Colors.white),
+                ),
+                const SizedBox(height: 15),
+              ],
               ElevatedButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () async {
+                  setState(() {
+                    _verificandoInternet = !_verificandoInternet;
+                  });
+                  final List<ConnectivityResult> connectivityResult =
+                      await Connectivity().checkConnectivity();
+                  if (!connectivityResult.contains(ConnectivityResult.none)) {
+                    if (context.mounted) {
+                      Navigator.pop(context);
+                    }
+                  }
+                  setState(() {
+                    _verificandoInternet = !_verificandoInternet;
+                  });
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonLogin,
                   padding: const EdgeInsets.symmetric(

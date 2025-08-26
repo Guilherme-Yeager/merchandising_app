@@ -43,6 +43,8 @@ dependencies:
   recase: ^4.1.0
   quickalert: ^1.1.0
   intl: ^0.20.2
+  connectivity_plus: ^6.1.5
+  http: ^1.5.0
 
 dev_dependencies:
   flutter_test:

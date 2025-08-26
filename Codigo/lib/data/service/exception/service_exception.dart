@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:http/http.dart' as http;
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
+
 enum TipoErro {
   databaseError,
   syntaxError,
@@ -43,14 +46,16 @@ class ServiceException implements Exception {
 
   static TipoErro _detectarTipoErro(dynamic exception) {
     final String mensagem = exception.toString().toLowerCase();
+    AppLogger.instance.e("Error: ${exception.runtimeType}");
+    if (exception is TimeoutException) {
+      return TipoErro.timeout;
+    }
 
     if (exception is SocketException ||
+        exception is http.ClientException ||
         mensagem.contains('socketexception') ||
         mensagem.contains('failed host lookup')) {
       return TipoErro.offline;
-    }
-    if (exception is TimeoutException) {
-      return TipoErro.timeout;
     }
     if (mensagem.contains('500')) {
       return TipoErro.serverError;
