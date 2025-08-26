@@ -37,8 +37,7 @@ class OfflineScreen extends StatelessWidget {
               ),
               const SizedBox(height: 40),
               ElevatedButton(
-                onPressed:
-                    () => Navigator.pushReplacementNamed(context, '/splash'),
+                onPressed: () => Navigator.pop(context),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.buttonLogin,
                   padding: const EdgeInsets.symmetric(

@@ -45,8 +45,8 @@ class ServiceException implements Exception {
     final String mensagem = exception.toString().toLowerCase();
 
     if (exception is SocketException ||
-        mensagem.contains('SocketException') ||
-        mensagem.contains('Failed host lookup')) {
+        mensagem.contains('socketexception') ||
+        mensagem.contains('failed host lookup')) {
       return TipoErro.offline;
     }
     if (exception is TimeoutException) {

@@ -111,6 +111,19 @@ class _LoginScreenState extends State<LoginScreen> {
                                           context: context,
                                         );
                                       }
+                                    } else if (exception.tipo ==
+                                        TipoErro.offline) {
+                                      await Future.delayed(
+                                        Duration(seconds: 1),
+                                      );
+                                      if (context.mounted) {
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (_) => OfflineScreen(),
+                                          ),
+                                        );
+                                      }
                                     }
                                   }
                                   if (logar) {
@@ -125,7 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                           Duration(seconds: 1),
                                         );
                                         if (context.mounted) {
-                                          Navigator.pushReplacement(
+                                          Navigator.push(
                                             context,
                                             MaterialPageRoute(
                                               builder: (_) => OfflineScreen(),

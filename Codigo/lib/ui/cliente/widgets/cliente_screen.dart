@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
+import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
@@ -49,12 +52,10 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
   @override
   Widget build(BuildContext context) {
-    /// Providers
+    /// ViewModels
     final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
     );
-
-    /// ViewModels
     final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
       context,
       listen: false,
@@ -130,9 +131,37 @@ class _ClienteScreenState extends State<ClienteScreen> {
                         child: RefreshIndicator(
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
-                            await clienteViewModel.updateClientes(
-                              loginViewModel.userModel!.codusur,
-                            );
+                            try {
+                              await clienteViewModel.updateClientes(
+                                loginViewModel.userModel!.codusur,
+                              );
+                            } on ServiceException catch (exception) {
+                              if (exception.tipo == TipoErro.offline) {
+                                await Future.delayed(Duration(seconds: 1));
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => OfflineScreen(),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                await Future.delayed(Duration(seconds: 1));
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => ErrorScreen(
+                                            mensagem: exception.mensagem,
+                                          ),
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+                            }
                           },
                           child: Scrollbar(
                             controller: _scrollController,
@@ -305,7 +334,35 @@ class _ClienteScreenState extends State<ClienteScreen> {
                           });
 
                           /// Atualiza os produtos
-                          await produtoViewModel.updateProdutos();
+                          try {
+                            await produtoViewModel.updateProdutos();
+                          } on ServiceException catch (exception) {
+                            if (exception.tipo == TipoErro.offline) {
+                              await Future.delayed(Duration(seconds: 1));
+                              if (mounted) {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => OfflineScreen(),
+                                  ),
+                                );
+                              }
+                            } else {
+                              await Future.delayed(Duration(seconds: 1));
+                              if (mounted) {
+                                Navigator.pushReplacement(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder:
+                                        (_) => ErrorScreen(
+                                          mensagem: exception.mensagem,
+                                        ),
+                                  ),
+                                );
+                              }
+                              return;
+                            }
+                          }
 
                           clienteViewModel.selecionarCliente(cliente);
                           homeViewModel.updateTitleAppBar("Produtos");

@@ -58,7 +58,7 @@ class _SplashScreenState extends State<SplashScreen> {
         if (exception.tipo == TipoErro.offline) {
           await Future.delayed(Duration(seconds: 1));
           if (mounted) {
-            Navigator.pushReplacement(
+            Navigator.push(
               context,
               MaterialPageRoute(builder: (_) => OfflineScreen()),
             );
