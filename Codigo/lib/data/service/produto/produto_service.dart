@@ -9,9 +9,9 @@ class ProdutoService {
   ///
   /// Já caso ocorra algum erro durante o insert, uma [ServiceException]
   /// será lançada contendo informações sobre o tipo de erro ocorrido.
-  Future<List<Map<String, dynamic>>> getAll() {
+  Future<List<Map<String, dynamic>>> getAll() async {
     try {
-      return Supabase.instance.client
+      return await Supabase.instance.client
           .from('vw_merchandising_produtos')
           .select('codprod, descricao, qtest, pvenda');
     } on Exception catch (exception) {
@@ -34,10 +34,8 @@ class ProdutoService {
               .select('pvenda')
               .eq('codprod', codProd)
               .maybeSingle();
-      if (response == null) {
-        return null;
-      }
-      return response['pvenda'];
+
+      return response != null ? response['pvenda'] : null;
     } on ServiceException {
       rethrow;
     }
