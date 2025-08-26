@@ -11,9 +11,9 @@ class ClienteService {
   /// ou uma lista vazia, caso não haja nenhum.
   /// Caso ocorra algum erro durante a consulta, uma [ServiceException] será lançada
   /// contendo informações sobre o tipo de erro ocorrido.
-  Future<List<Map<String, dynamic>>> getAll(String codusur) {
+  Future<List<Map<String, dynamic>>> getAll(String codusur) async {
     try {
-      return Supabase.instance.client
+      return await Supabase.instance.client
           .from('vw_merchandising_clientes')
           .select(
             'codcli, cliente, fantasia, telent, enderent, municent, bairrocob, cgcent',

@@ -6,7 +6,9 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
+import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:merchandising_app/utils/validators/login_validator.dart';
 import 'package:provider/provider.dart';
@@ -112,10 +114,43 @@ class _LoginScreenState extends State<LoginScreen> {
                                     }
                                   }
                                   if (logar) {
-                                    await loginViewModel.carregarDependencias(
-                                      clienteViewModel,
-                                      produtoViewModel,
-                                    );
+                                    try {
+                                      await loginViewModel.carregarDependencias(
+                                        clienteViewModel,
+                                        produtoViewModel,
+                                      );
+                                    } on ServiceException catch (exception) {
+                                      if (exception.tipo == TipoErro.offline) {
+                                        await Future.delayed(
+                                          Duration(seconds: 1),
+                                        );
+                                        if (context.mounted) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (_) => OfflineScreen(),
+                                            ),
+                                          );
+                                        }
+                                      } else {
+                                        await Future.delayed(
+                                          Duration(seconds: 1),
+                                        );
+                                        if (context.mounted) {
+                                          Navigator.pushReplacement(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder:
+                                                  (_) => ErrorScreen(
+                                                    mensagem:
+                                                        exception.mensagem,
+                                                  ),
+                                            ),
+                                          );
+                                        }
+                                        return;
+                                      }
+                                    }
                                     if (context.mounted) {
                                       Navigator.pushNamedAndRemoveUntil(
                                         context,

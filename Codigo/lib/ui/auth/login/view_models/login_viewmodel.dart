@@ -83,13 +83,17 @@ class LoginViewModel extends ChangeNotifier {
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
   ) async {
-    await clienteViewModel.updateClientes(_userModel!.codusur);
-    SupabaseConfig.inscribeRealTimeChangeCliente(
-      clienteViewModel.updateClientes,
-      _userModel!.codusur,
-    );
-    SupabaseConfig.inscribeRealTimeChangeProduto(
-      produtoViewModel.updateProdutos,
-    );
+    try {
+      await clienteViewModel.updateClientes(_userModel!.codusur);
+      SupabaseConfig.inscribeRealTimeChangeCliente(
+        clienteViewModel.updateClientes,
+        _userModel!.codusur,
+      );
+      SupabaseConfig.inscribeRealTimeChangeProduto(
+        produtoViewModel.updateProdutos,
+      );
+    } on ServiceException {
+      rethrow;
+    }
   }
 }
