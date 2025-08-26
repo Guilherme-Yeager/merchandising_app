@@ -27,11 +27,23 @@ class ErrorScreen extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 32.0),
+                Center(
                   child: Text(
-                    'Error: $mensagem =(',
+                    ':(',
                     textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.black,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 28.0),
+                  child: Text(
+                    'Error: $mensagem',
+                    textAlign: TextAlign.justify,
                     style: const TextStyle(
                       color: Colors.black,
                       fontSize: 20,

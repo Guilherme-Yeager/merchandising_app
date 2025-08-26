@@ -4,6 +4,7 @@ import 'package:merchandising_app/routing/routes.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
 import 'package:merchandising_app/ui/core/ui/gradiente_linear_custom.dart';
 import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
@@ -62,8 +63,18 @@ class _SplashScreenState extends State<SplashScreen> {
               MaterialPageRoute(builder: (_) => OfflineScreen()),
             );
           }
+        } else {
+          await Future.delayed(Duration(seconds: 1));
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                builder: (_) => ErrorScreen(mensagem: exception.mensagem),
+              ),
+            );
+          }
+          return;
         }
-        return;
       }
       if (mounted) {
         Navigator.pushNamedAndRemoveUntil(

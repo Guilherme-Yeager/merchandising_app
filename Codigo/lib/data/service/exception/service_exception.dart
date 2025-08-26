@@ -42,7 +42,7 @@ class ServiceException implements Exception {
   String toString() => mensagem;
 
   static TipoErro _detectarTipoErro(dynamic exception) {
-    final mensagem = exception.toString().toLowerCase();
+    final String mensagem = exception.toString().toLowerCase();
 
     if (exception is SocketException ||
         mensagem.contains('SocketException') ||
@@ -79,12 +79,6 @@ class ServiceException implements Exception {
     if (mensagem.contains('duplicate key')) {
       return TipoErro.duplicateKey;
     }
-    if (mensagem.contains('not found')) {
-      return TipoErro.notFound;
-    }
-    if (mensagem.contains('bad request')) {
-      return TipoErro.badRequest;
-    }
     if (mensagem.contains('syntax error')) {
       return TipoErro.syntaxError;
     }
@@ -117,6 +111,12 @@ class ServiceException implements Exception {
         mensagem.contains('sql error')) {
       return TipoErro.databaseError;
     }
+    if (mensagem.contains('not found')) {
+      return TipoErro.notFound;
+    }
+    if (mensagem.contains('bad request')) {
+      return TipoErro.badRequest;
+    }
     return TipoErro.unknown;
   }
 
@@ -125,7 +125,7 @@ class ServiceException implements Exception {
       case TipoErro.offline:
         return 'Sem conexão com a internet.';
       case TipoErro.timeout:
-        return 'A requisição demorou demais.';
+        return 'A requisição demorou demais. Tente novamente mais tarde.';
       case TipoErro.userBadLogin:
         return 'Usuário ou senha inválidos.';
       case TipoErro.userMissingInformation:
@@ -133,41 +133,41 @@ class ServiceException implements Exception {
       case TipoErro.userTooManyRequests:
         return 'Muitas tentativas. Tente novamente mais tarde.';
       case TipoErro.invalidRefreshToken:
-        return 'Token de atualização inválido.';
+        return 'Token de atualização inválido. Faça login novamente.';
       case TipoErro.expiredRefreshToken:
         return 'Token expirado.';
       case TipoErro.noSessionFound:
         return 'Nenhuma sessão encontrada.';
       case TipoErro.permissionDenied:
-        return 'Permissão negada.';
+        return 'Permissão negada. Contate o suporte.';
       case TipoErro.duplicateKey:
         return 'Registro duplicado.';
       case TipoErro.notFound:
-        return 'Recurso não encontrado.';
+        return 'Recurso não encontrado. Contate o suporte.';
       case TipoErro.badRequest:
-        return 'Requisição inválida.';
+        return 'Requisição inválida. Contate o suporte.';
       case TipoErro.databaseError:
-        return 'Ocorreu um erro ao acessar o banco de dados.';
+        return 'Ocorreu um erro ao acessar o banco de dados. Contate o suporte.';
       case TipoErro.serverError:
         return 'Erro no servidor.';
       case TipoErro.syntaxError:
-        return 'Erro de sintaxe no comando SQL.';
+        return 'Erro de sintaxe no comando SQL. Contate o suporte.';
       case TipoErro.relationNotFound:
-        return 'Tabela ou relação não encontrada no banco de dados.';
+        return 'Tabela ou relação não encontrada no banco de dados. Contate o suporte.';
       case TipoErro.columnNotFound:
-        return 'Coluna não encontrada no banco de dados.';
+        return 'Coluna não encontrada no banco de dados. Contate o suporte.';
       case TipoErro.primaryKeyViolation:
-        return 'Registro duplicado.';
+        return 'Violação de chave primária. Contate o suporte.';
       case TipoErro.foreignKeyViolation:
         return 'Violação de chave estrangeira.';
       case TipoErro.notNullViolation:
-        return 'Campo obrigatório não preenchido.';
+        return 'Campo obrigatório não preenchido. Contate o suporte.';
       case TipoErro.uniqueViolation:
         return 'Valor duplicado.';
       case TipoErro.connectionFailed:
-        return 'Falha na conexão com o banco de dados.';
+        return 'Falha na conexão com o banco de dados. Contate o suporte.';
       case TipoErro.unknown:
-        return 'Erro desconhecido';
+        return 'Erro desconhecido. Contate o suporte.';
     }
   }
 }
