@@ -35,8 +35,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   List<ExpansibleController> _expansibleControllers = [];
   int? _produtoSelecionado;
 
-  bool salvandoPedido = false;
-
   @override
   Widget build(BuildContext context) {
     /// ViewModels
@@ -150,7 +148,8 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
             ),
             const SizedBox(height: 10),
             Expanded(
-              child:
+              child: Stack(
+                children: [
                   produtos.isEmpty
                       ? Center(
                         child: const Text(
@@ -209,6 +208,8 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                           ),
                         ),
                       ),
+                ],
+              ),
             ),
           ],
         ),
@@ -462,123 +463,112 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                               },
                             ),
                             confirmBtnText: "Salvar",
-                            onConfirmBtnTap:
-                                salvandoPedido
-                                    ? null
-                                    : () async {
-                                      /// Se já estiver salvando um pedido não vai salvar
-                                      /// novamente ao mesmo tempo.
-                                      if (salvandoPedido) {
-                                        return;
-                                      }
-                                      FocusScope.of(context).unfocus();
+                            onConfirmBtnTap: () async {
+                              /// Se já estiver salvando um pedido não vai salvar
+                              /// novamente ao mesmo tempo.
+                              FocusScope.of(context).unfocus();
+                              Navigator.pop(context);
 
-                                      setState(() {
-                                        salvandoPedido = !salvandoPedido;
-                                      });
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                barrierColor: Colors.black54,
+                                builder: (BuildContext context) {
+                                  return const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.lightBlueAccent,
+                                    ),
+                                  );
+                                },
+                              );
 
-                                      /// Modelo do cabeçalho do pedido
-                                      PedcabModel pedcabModel = PedcabModel(
-                                        dataPedido: DateFormat(
-                                          'dd/MM/yyyy',
-                                        ).format(DateTime.now()),
-                                        codigoVendedor:
-                                            loginViewModel.userModel!.codusur
-                                                .toString(),
-                                        codigoCliente:
-                                            clienteViewModel
-                                                .clienteSelecionado!
-                                                .codcli
-                                                .toString(),
-                                      );
+                              /// Modelo do cabeçalho do pedido
+                              PedcabModel pedcabModel = PedcabModel(
+                                dataPedido: DateFormat(
+                                  'dd/MM/yyyy',
+                                ).format(DateTime.now()),
+                                codigoVendedor:
+                                    loginViewModel.userModel!.codusur
+                                        .toString(),
+                                codigoCliente:
+                                    clienteViewModel.clienteSelecionado!.codcli
+                                        .toString(),
+                              );
 
-                                      AppLogger.instance.i(
-                                        "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
-                                      );
+                              AppLogger.instance.i(
+                                "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
+                              );
 
-                                      /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
-                                      try {
-                                        final int codigoPedido =
-                                            await pedidoViewModel
-                                                .inserirCabecalhoPedido(
-                                                  pedcabModel,
-                                                );
+                              /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
+                              try {
+                                final int codigoPedido = await pedidoViewModel
+                                    .inserirCabecalhoPedido(pedcabModel);
 
-                                        double? precoVenda =
-                                            await produtoViewModel
-                                                .getPrecoVenda(produto.codprod);
+                                double? precoVenda = await produtoViewModel
+                                    .getPrecoVenda(produto.codprod);
 
-                                        if (precoVenda == null) {
-                                          AppLogger.instance.w(
-                                            "O produto não possui preço de venda.",
-                                          );
-                                          precoVenda = 0;
-                                        }
+                                if (precoVenda == null) {
+                                  AppLogger.instance.w(
+                                    "O produto não possui preço de venda.",
+                                  );
+                                  precoVenda = 0;
+                                }
 
-                                        /// Modelo do corpo do pedido
-                                        PedcorpModel pedcorpModel =
-                                            PedcorpModel(
-                                              codigoPedido: codigoPedido,
-                                              codigoProduto:
-                                                  produto.codprod.toString(),
-                                              quantidade: quantidade,
-                                              precoVenda: precoVenda,
-                                              precoBase: precoVenda,
-                                            );
+                                /// Modelo do corpo do pedido
+                                PedcorpModel pedcorpModel = PedcorpModel(
+                                  codigoPedido: codigoPedido,
+                                  codigoProduto: produto.codprod.toString(),
+                                  quantidade: quantidade,
+                                  precoVenda: precoVenda,
+                                  precoBase: precoVenda,
+                                );
 
-                                        AppLogger.instance.i(
-                                          "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
-                                        );
+                                AppLogger.instance.i(
+                                  "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
+                                );
 
-                                        /// Inserindo corpo do pedido.
-                                        await pedidoViewModel
-                                            .inserirCorpoPedido(pedcorpModel);
-                                      } on ServiceException catch (exception) {
-                                        if (exception.tipo ==
-                                            TipoErro.offline) {
-                                          await Future.delayed(
-                                            Duration(seconds: 1),
-                                          );
-                                          if (mounted) {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder: (_) => OfflineScreen(),
-                                              ),
-                                            );
-                                            return;
-                                          }
-                                        } else {
-                                          await Future.delayed(
-                                            Duration(seconds: 1),
-                                          );
-                                          if (mounted) {
-                                            Navigator.pushReplacement(
-                                              context,
-                                              MaterialPageRoute(
-                                                builder:
-                                                    (_) => ErrorScreen(
-                                                      mensagem:
-                                                          exception.mensagem,
-                                                    ),
-                                              ),
-                                            );
-                                          }
-                                          return;
-                                        }
-                                      }
-                                      setState(() {
-                                        salvandoPedido = !salvandoPedido;
-                                      });
-                                      if (mounted) {
-                                        Navigator.pop(context);
-                                        pedidoViewModel.salvarPedido();
-                                        retornaScreenCliente(
-                                          homeViewModel,
-                                          clienteViewModel,
-                                        );
-                                      }
-                                    },
+                                /// Inserindo corpo do pedido.
+                                await pedidoViewModel.inserirCorpoPedido(
+                                  pedcorpModel,
+                                );
+                              } on ServiceException catch (exception) {
+                                if (exception.tipo == TipoErro.offline) {
+                                  await Future.delayed(Duration(seconds: 1));
+                                  if (mounted) {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => OfflineScreen(),
+                                      ),
+                                    );
+                                    return;
+                                  }
+                                } else {
+                                  await Future.delayed(Duration(seconds: 1));
+                                  if (mounted) {
+                                    Navigator.pushReplacement(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder:
+                                            (_) => ErrorScreen(
+                                              mensagem: exception.mensagem,
+                                            ),
+                                      ),
+                                    );
+                                  }
+                                  return;
+                                }
+                              }
+
+                              if (mounted) {
+                                Navigator.pop(context);
+                                pedidoViewModel.salvarPedido();
+                                retornaScreenCliente(
+                                  homeViewModel,
+                                  clienteViewModel,
+                                );
+                              }
+                            },
                           );
                         },
                         style: ElevatedButton.styleFrom(
