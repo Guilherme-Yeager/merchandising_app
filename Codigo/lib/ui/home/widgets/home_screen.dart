@@ -138,55 +138,59 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       extendBody: true,
-      bottomNavigationBar: AnimatedNotchBottomBar(
-        notchBottomBarController: _notchBottomBarController,
-        color: Colors.white,
-        showLabel: true,
-        textOverflow: TextOverflow.visible,
-        maxLine: 1,
-        shadowElevation: 5,
-        kBottomRadius: 16.0,
-        notchColor: AppColors.activeMenu,
-        removeMargins: false,
-        bottomBarWidth: 500,
-        showShadow: false,
-        durationInMilliSeconds: 300,
-        elevation: 1,
-        bottomBarItems: const [
-          BottomBarItem(
-            inActiveItem: Icon(Icons.home_outlined, color: Colors.black),
-            activeItem: Icon(Icons.home_outlined, color: Colors.black),
-          ),
-          BottomBarItem(
-            inActiveItem: Icon(Icons.group_outlined, color: Colors.black),
-            activeItem: Icon(Icons.group_outlined, color: Colors.black),
-          ),
-        ],
-        onTap: (index) {
-          AppLogger.instance.i("Página selecionada: ${bottomBarPages[index]}");
-          if (index == 0) {
-            homeViewModel.updateTitleAppBar("");
-            homeViewModel.updateSubtitleAppBar(null);
-          } else if (index == 1) {
-            /// Caso haja um cliente seleconado, altera o título do AppBar
-            /// para "Pedido", caso contrário, mantém "Clientes"
-            if (clienteViewModel.clienteSelecionado != null) {
-              produtoViewModel.limparFiltro();
-              homeViewModel.updateTitleAppBar("Produtos");
-              homeViewModel.updateSubtitleAppBar(
-                "Total: ${produtoViewModel.produtosComFiltro.length}",
-              );
-            } else {
-              clienteViewModel.limparFiltro();
-              homeViewModel.updateTitleAppBar("Clientes");
-              homeViewModel.updateSubtitleAppBar(
-                "Total: ${clienteViewModel.clientesComFiltro.length}",
-              );
+      bottomNavigationBar: SafeArea(
+        child: AnimatedNotchBottomBar(
+          notchBottomBarController: _notchBottomBarController,
+          color: Colors.white,
+          showLabel: true,
+          textOverflow: TextOverflow.visible,
+          maxLine: 1,
+          shadowElevation: 5,
+          kBottomRadius: 16.0,
+          notchColor: AppColors.activeMenu,
+          removeMargins: false,
+          bottomBarWidth: 500,
+          showShadow: false,
+          durationInMilliSeconds: 300,
+          elevation: 1,
+          bottomBarItems: const [
+            BottomBarItem(
+              inActiveItem: Icon(Icons.home_outlined, color: Colors.black),
+              activeItem: Icon(Icons.home_outlined, color: Colors.black),
+            ),
+            BottomBarItem(
+              inActiveItem: Icon(Icons.group_outlined, color: Colors.black),
+              activeItem: Icon(Icons.group_outlined, color: Colors.black),
+            ),
+          ],
+          onTap: (index) {
+            AppLogger.instance.i(
+              "Página selecionada: ${bottomBarPages[index]}",
+            );
+            if (index == 0) {
+              homeViewModel.updateTitleAppBar("");
+              homeViewModel.updateSubtitleAppBar(null);
+            } else if (index == 1) {
+              /// Caso haja um cliente seleconado, altera o título do AppBar
+              /// para "Pedido", caso contrário, mantém "Clientes"
+              if (clienteViewModel.clienteSelecionado != null) {
+                produtoViewModel.limparFiltro();
+                homeViewModel.updateTitleAppBar("Produtos");
+                homeViewModel.updateSubtitleAppBar(
+                  "Total: ${produtoViewModel.produtosComFiltro.length}",
+                );
+              } else {
+                clienteViewModel.limparFiltro();
+                homeViewModel.updateTitleAppBar("Clientes");
+                homeViewModel.updateSubtitleAppBar(
+                  "Total: ${clienteViewModel.clientesComFiltro.length}",
+                );
+              }
             }
-          }
-          _pageController.jumpToPage(index);
-        },
-        kIconSize: 24.0,
+            _pageController.jumpToPage(index);
+          },
+          kIconSize: 24.0,
+        ),
       ),
     );
   }

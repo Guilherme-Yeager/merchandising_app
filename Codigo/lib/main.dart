@@ -40,7 +40,6 @@ class MainApp extends StatelessWidget {
       locale: Locale('pt', 'BR'),
       initialRoute: Routes.splash,
       routes: Routes.getRoutes(),
-      builder: (_, child) => SafeArea(child: child ?? SizedBox.shrink()),
     );
   }
 }
