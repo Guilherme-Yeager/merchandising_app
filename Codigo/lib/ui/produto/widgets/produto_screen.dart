@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:intl/intl.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
 import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
@@ -9,6 +10,8 @@ import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart'
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
+import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
@@ -164,7 +167,35 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         child: RefreshIndicator(
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
-                            await produtoViewModel.updateProdutos();
+                            try {
+                              await produtoViewModel.updateProdutos();
+                            } on ServiceException catch (exception) {
+                              if (exception.tipo == TipoErro.offline) {
+                                await Future.delayed(Duration(seconds: 1));
+                                if (context.mounted) {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder: (_) => OfflineScreen(),
+                                    ),
+                                  );
+                                }
+                              } else {
+                                await Future.delayed(Duration(seconds: 1));
+                                if (context.mounted) {
+                                  Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                      builder:
+                                          (_) => ErrorScreen(
+                                            mensagem: exception.mensagem,
+                                          ),
+                                    ),
+                                  );
+                                }
+                                return;
+                              }
+                            }
                           },
                           child: Scrollbar(
                             controller: _scrollController,
@@ -466,42 +497,76 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                       );
 
                                       /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
-                                      final int codigoPedido =
-                                          await pedidoViewModel
-                                              .inserirCabecalhoPedido(
-                                                pedcabModel,
-                                              );
+                                      try {
+                                        final int codigoPedido =
+                                            await pedidoViewModel
+                                                .inserirCabecalhoPedido(
+                                                  pedcabModel,
+                                                );
 
-                                      double? precoVenda =
-                                          await produtoViewModel.getPrecoVenda(
-                                            produto.codprod,
+                                        double? precoVenda =
+                                            await produtoViewModel
+                                                .getPrecoVenda(produto.codprod);
+
+                                        if (precoVenda == null) {
+                                          AppLogger.instance.w(
+                                            "O produto não possui preço de venda.",
                                           );
-                                      if (precoVenda == null) {
-                                        AppLogger.instance.w(
-                                          "O produto não possui preço de venda.",
+                                          precoVenda = 0;
+                                        }
+
+                                        /// Modelo do corpo do pedido
+                                        PedcorpModel pedcorpModel =
+                                            PedcorpModel(
+                                              codigoPedido: codigoPedido,
+                                              codigoProduto:
+                                                  produto.codprod.toString(),
+                                              quantidade: quantidade,
+                                              precoVenda: precoVenda,
+                                              precoBase: precoVenda,
+                                            );
+
+                                        AppLogger.instance.i(
+                                          "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
                                         );
-                                        precoVenda = 0;
+
+                                        /// Inserindo corpo do pedido.
+                                        await pedidoViewModel
+                                            .inserirCorpoPedido(pedcorpModel);
+                                      } on ServiceException catch (exception) {
+                                        if (exception.tipo ==
+                                            TipoErro.offline) {
+                                          await Future.delayed(
+                                            Duration(seconds: 1),
+                                          );
+                                          if (mounted) {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => OfflineScreen(),
+                                              ),
+                                            );
+                                            return;
+                                          }
+                                        } else {
+                                          await Future.delayed(
+                                            Duration(seconds: 1),
+                                          );
+                                          if (mounted) {
+                                            Navigator.pushReplacement(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder:
+                                                    (_) => ErrorScreen(
+                                                      mensagem:
+                                                          exception.mensagem,
+                                                    ),
+                                              ),
+                                            );
+                                          }
+                                          return;
+                                        }
                                       }
-
-                                      /// Modelo do corpo do pedido
-                                      PedcorpModel pedcorpModel = PedcorpModel(
-                                        codigoPedido: codigoPedido,
-                                        codigoProduto:
-                                            produto.codprod.toString(),
-                                        quantidade: quantidade,
-                                        precoVenda: precoVenda,
-                                        precoBase: precoVenda,
-                                      );
-
-                                      AppLogger.instance.i(
-                                        "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
-                                      );
-
-                                      /// Inserindo corpo do pedido.
-                                      await pedidoViewModel.inserirCorpoPedido(
-                                        pedcorpModel,
-                                      );
-
                                       setState(() {
                                         salvandoPedido = !salvandoPedido;
                                       });
