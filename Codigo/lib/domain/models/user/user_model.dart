@@ -24,10 +24,7 @@ class UserModel {
   factory UserModel.fromJson(Map<String, dynamic> json) {
     return UserModel(
       codusur: json["codusur"],
-      nome:
-          json["nome"] != null
-              ? TextHelper.extrairNome(json["nome"])
-              : "Sem nome",
+      nome: json["nome"],
       email: json["email"],
     );
   }

@@ -49,8 +49,8 @@ class PedidoService {
         'codigo_pedido': pedcorpModel.codigoPedido,
         'codigo_produto': pedcorpModel.codigoProduto,
         'quantidade': pedcorpModel.quantidade,
-        'preco_venda': pedcorpModel.precoVenda.toInt(),
-        'preco_base': pedcorpModel.precoBase.toInt(),
+        'preco_venda': pedcorpModel.precoVenda,
+        'preco_base': pedcorpModel.precoBase,
       });
       return true;
     } on Exception catch (exception) {
