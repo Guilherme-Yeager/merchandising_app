@@ -1,5 +1,3 @@
-import 'package:merchandising_app/utils/helpers/text_helper.dart';
-
 /// Modelo que representa um usuário autenticado no sistema.
 class UserModel {
   /// Código do usuário.
