@@ -1,7 +1,6 @@
 import 'package:animated_notch_bottom_bar/animated_notch_bottom_bar/animated_notch_bottom_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/routing/routes.dart';
-import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
@@ -9,7 +8,6 @@ import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:recase/recase.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -32,10 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     /// ViewModels
-    final LoginViewModel loginViewModel = Provider.of<LoginViewModel>(
-      context,
-      listen: false,
-    );
     final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
       context,
     );
@@ -44,10 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
       listen: false,
     );
     final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(context);
-
-    // Dados
-    final String userName =
-        ReCase(loginViewModel.userModel?.nome ?? "Usuário").titleCase;
 
     /// Páginas do AnimatedNotchBottomBar
     final Map<String, WidgetBuilder> routesMap = Routes.getRoutes();
