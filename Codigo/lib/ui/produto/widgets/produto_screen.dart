@@ -467,7 +467,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                               /// Se já estiver salvando um pedido não vai salvar
                               /// novamente ao mesmo tempo.
                               FocusScope.of(context).unfocus();
-                              Navigator.pop(context);
 
                               showDialog(
                                 context: context,
@@ -561,6 +560,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                               }
 
                               if (mounted) {
+                                Navigator.pop(context);
                                 Navigator.pop(context);
                                 pedidoViewModel.salvarPedido();
                                 retornaScreenCliente(
