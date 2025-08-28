@@ -121,3 +121,7 @@ app.*.symbols
 # Environments
 .env
 .vscode
+
+# Arquivos gerados pelo build_runner
+*.mocks.dart
+*.g.dart
