@@ -25,6 +25,7 @@ import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart'
 import 'package:merchandising_app/ui/splash/view_models/splash_viewmodel.dart';
 import 'package:provider/provider.dart';
 import 'package:provider/single_child_widget.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 abstract class ProvidersConfig {
   static List<SingleChildWidget> get providers => [
@@ -117,6 +118,8 @@ abstract class ProvidersConfig {
           ),
     ),
     ChangeNotifierProvider(create: (_) => HomeViewModel()),
-    ChangeNotifierProvider(create: (_) => SplashViewModel()),
+    ChangeNotifierProvider<SplashViewModel>(
+      create: (_) => SplashViewModel(supabaseClient: Supabase.instance.client),
+    ),
   ];
 }
