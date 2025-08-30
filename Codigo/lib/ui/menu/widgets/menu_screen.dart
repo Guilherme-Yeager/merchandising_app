@@ -36,7 +36,7 @@ class _MenuScreenState extends State<MenuScreen> {
           crossAxisSpacing: 40.0,
           mainAxisSpacing: 40.0,
         ),
-        itemCount: 3,
+        itemCount: cards.length,
         itemBuilder: (_, index) {
           return cards[index];
         },
@@ -66,28 +66,6 @@ class _MenuScreenState extends State<MenuScreen> {
               const SizedBox(height: 6),
               const Text(
                 "Meus dados",
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
-              ),
-            ],
-          ),
-        ),
-      ),
-      InkWell(
-        onTap: () {
-          AppLogger.instance.i("Opcão 'Dúvidas' selecionada.");
-        },
-        child: Card(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(
-                Icons.contact_support_outlined,
-                size: 50,
-                color: Colors.black,
-              ),
-              const SizedBox(height: 6),
-              const Text(
-                "Dúvidas",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.w700),
               ),
             ],
