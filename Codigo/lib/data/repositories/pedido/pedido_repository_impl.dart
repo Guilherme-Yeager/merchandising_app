@@ -27,6 +27,7 @@ class PedidoRepositoryImpl implements PedidoRepository {
     }
   }
 
+  @override
   Future<void> updateImportadoPedCab(int codigoPedido) async {
     try {
       await pedidoService.updateImportadoPedCab(codigoPedido);
