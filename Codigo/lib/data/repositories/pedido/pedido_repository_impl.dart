@@ -12,7 +12,7 @@ class PedidoRepositoryImpl implements PedidoRepository {
   @override
   Future<int> inserirCabecalho(PedcabModel pedcabModel) async {
     try {
-      return await pedidoService.insertPedCab(pedcabModel);
+      return await pedidoService.inserirCabecalho(pedcabModel);
     } on ServiceException {
       rethrow;
     }
@@ -21,7 +21,7 @@ class PedidoRepositoryImpl implements PedidoRepository {
   @override
   Future<bool> inserirCorpo(PedcorpModel pedcorpModel) async {
     try {
-      return await pedidoService.insertPedCorp(pedcorpModel);
+      return await pedidoService.inserirCorpo(pedcorpModel);
     } on ServiceException {
       rethrow;
     }
@@ -30,7 +30,7 @@ class PedidoRepositoryImpl implements PedidoRepository {
   @override
   Future<void> updateImportadoPedCab(int codigoPedido) async {
     try {
-      await pedidoService.updateImportadoPedCab(codigoPedido);
+      await pedidoService.atualizarImportadoCabecalho(codigoPedido);
     } on ServiceException {
       rethrow;
     }

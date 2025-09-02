@@ -18,7 +18,7 @@ class UserRepositoryImpl implements UserRepository {
   @override
   Future<Map<String, dynamic>?> getUser(String uuid) async {
     try {
-      Map<String, dynamic>? response = await userService.get(uuid);
+      Map<String, dynamic>? response = await userService.obterUsuario(uuid);
       if (response != null) {
         return response;
       }

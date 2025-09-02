@@ -22,10 +22,12 @@ class LoginRepositoryImpl implements LoginRepository {
   Future<UserModel?> login(String email, String password) async {
     UserModel? userModel;
     try {
-      AuthResponse authResponse = await loginService.logar(email, password);
+      AuthResponse authResponse = await loginService.entrar(email, password);
       final User? user = Supabase.instance.client.auth.currentUser;
       if (user != null) {
-        Map<String, dynamic>? response = await userService.get(user.id);
+        Map<String, dynamic>? response = await userService.obterUsuario(
+          user.id,
+        );
         if (response != null) {
           /// Adiciona o email ao json para ser incluido no modelo.
           response["email"] = authResponse.user!.email;

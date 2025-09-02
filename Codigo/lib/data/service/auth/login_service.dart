@@ -11,7 +11,7 @@ class LoginService {
   /// Retorna um [AuthResponse] com informações da sessão atual.
   /// Caso ocorra algum erro durante a consulta, uma [ServiceException] será lançada
   /// contendo informações sobre o tipo de erro ocorrido.
-  Future<AuthResponse> logar(String email, String password) async {
+  Future<AuthResponse> entrar(String email, String password) async {
     try {
       return await Supabase.instance.client.auth.signInWithPassword(
         email: email,

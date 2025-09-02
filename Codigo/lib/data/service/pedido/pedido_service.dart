@@ -3,16 +3,16 @@ import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
 import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Serviço responsável por obter inserir os dados do pedido no supabase.
+/// Serviço responsável por realizar operações nos dados do pedido no Supabase.
 class PedidoService {
   /// Insere o cabeçalho do pedido.
   ///
   /// - [pedcabModel]: cabeçalho do pedido.
   ///
-  /// Retorna true em caso de sucesso. Já caso ocorra algum erro durante
+  /// Retorna `true` em caso de sucesso. Caso ocorra algum erro durante
   /// o insert, uma [ServiceException] será lançada contendo informações
   /// sobre o tipo de erro ocorrido.
-  Future<int> insertPedCab(PedcabModel pedcabModel) async {
+  Future<int> inserirCabecalho(PedcabModel pedcabModel) async {
     try {
       final Map<String, dynamic>? codigoPedido =
           await Supabase.instance.client
@@ -40,10 +40,10 @@ class PedidoService {
   ///
   /// - [pedcorpModel]: corpo do pedido.
   ///
-  /// Retorna true em caso de sucesso. Já caso ocorra algum erro durante
+  /// Retorna true em caso de sucesso. Caso ocorra algum erro durante
   /// o insert, uma [ServiceException] será lançada contendo informações
   /// sobre o tipo de erro ocorrido.
-  Future<bool> insertPedCorp(PedcorpModel pedcorpModel) async {
+  Future<bool> inserirCorpo(PedcorpModel pedcorpModel) async {
     try {
       await Supabase.instance.client.from('polibras_pedcorp').insert({
         'codigo_pedido': pedcorpModel.codigoPedido,
@@ -60,7 +60,12 @@ class PedidoService {
 
   /// Atualiza o campo importado do cabeçalho do pedido para 9, onde indica
   /// para o supabase para levar o pedido para o ERP.
-  Future<void> updateImportadoPedCab(int codigoPedido) async {
+  ///
+  /// - [codigoPedido]: código do pedido a ser atualizado.
+  ///
+  /// Não retorna nada. Caso ocorra algum erro durante o update, uma [ServiceException]
+  /// será lançada contendo informações sobre o tipo de erro ocorrido.
+  Future<void> atualizarImportadoCabecalho(int codigoPedido) async {
     try {
       await Supabase.instance.client
           .from('polibras_pedcab')

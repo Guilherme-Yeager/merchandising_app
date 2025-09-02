@@ -1,15 +1,15 @@
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-/// Serviço responsável por obter informações dos pedidos no supabase.
-/// Caso ocorra algum erro durante a consulta, uma [ServiceException] será lançada
-/// contendo informações sobre o tipo de erro ocorrido.
+/// Serviço responsável por obter informações dos produtos no Supabase.
 class ProdutoService {
   /// Retorna todos os produtos da base de dados.
   ///
-  /// Já caso ocorra algum erro durante o insert, uma [ServiceException]
+  /// Retorna um `List<Map<String, dynamic>>` com os dados de todos os produtos,
+  /// ou uma lista vazia, caso não haja nenhum.
+  /// Caso ocorra algum erro durante a consulta, uma [ServiceException]
   /// será lançada contendo informações sobre o tipo de erro ocorrido.
-  Future<List<Map<String, dynamic>>> getAll() async {
+  Future<List<Map<String, dynamic>>> obterTodos() async {
     try {
       return await Supabase.instance.client
           .from('vw_merchandising_produtos')
@@ -23,10 +23,10 @@ class ProdutoService {
   ///
   /// - [codProd]: código de produto do cliente.
   ///
-  /// Retorna o preço de venda do produto em caso de sucesso. Já caso ocorra
-  /// algum erro durante o insert, uma [ServiceException] será lançada contendo
-  /// informações sobre o tipo de erro ocorrido.
-  Future<double?> getPrecoVenda(int codProd) async {
+  /// Retorna o preço de venda do produto em caso de sucesso ou nulo se não houver
+  /// no banco. Caso ocorra algum erro durante o insert, uma [ServiceException]
+  /// será lançada contendo informações sobre o tipo de erro ocorrido.
+  Future<double?> obterPrecoVenda(int codProd) async {
     try {
       final Map<String, dynamic>? response =
           await Supabase.instance.client

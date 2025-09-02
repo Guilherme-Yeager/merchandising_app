@@ -11,9 +11,8 @@ class ClienteRepositoryImpl implements ClienteRepository {
   @override
   Future<List<ClienteModel>> getAllClientes(int codusur) async {
     try {
-      final List<Map<String, dynamic>> response = await clienteService.getAll(
-        codusur.toString(),
-      );
+      final List<Map<String, dynamic>> response = await clienteService
+          .obterTodos(codusur.toString());
       return response.map((cliente) => ClienteModel.fromJson(cliente)).toList();
     } on ServiceException {
       rethrow;

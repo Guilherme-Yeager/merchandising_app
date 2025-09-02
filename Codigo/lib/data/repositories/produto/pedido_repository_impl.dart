@@ -11,7 +11,8 @@ class ProdutoRepositoryImpl implements ProdutoRepository {
   @override
   Future<List<ProdutoModel>> getAllProdutos() async {
     try {
-      final List<Map<String, dynamic>> response = await produtoService.getAll();
+      final List<Map<String, dynamic>> response =
+          await produtoService.obterTodos();
       return response.map((pedido) => ProdutoModel.fromJson(pedido)).toList();
     } on ServiceException {
       rethrow;
@@ -21,7 +22,7 @@ class ProdutoRepositoryImpl implements ProdutoRepository {
   @override
   Future<double?> getPrecoVenda(int codProd) async {
     try {
-      return produtoService.getPrecoVenda(codProd);
+      return produtoService.obterPrecoVenda(codProd);
     } on ServiceException {
       rethrow;
     }

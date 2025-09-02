@@ -12,7 +12,7 @@ class LogoutRepositoryImpl implements LogoutRepository {
   @override
   Future<void> logout() async {
     try {
-      await logoutService.logout();
+      await logoutService.sair();
     } on ServiceException {
       rethrow;
     }
