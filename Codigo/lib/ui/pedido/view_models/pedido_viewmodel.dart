@@ -42,6 +42,19 @@ class PedidoViewModel extends ChangeNotifier {
     }
   }
 
+  /// Atualiza o campo de importação do pedido.
+  ///
+  /// - [codigoPedido]: código do pedido a ser atualizado.
+  ///
+  ///  Uma [ServiceException] será lançada contendo informações sobre o tipo de erro ocorrido.
+  Future<void> atualizarImportadoPedCab(int codigoPedido) async {
+    try {
+      return _pedidoRepository.updateImportadoPedCab(codigoPedido);
+    } on ServiceException {
+      rethrow;
+    }
+  }
+
   /// Altera o valor de [salvouPedido] para `true` indicando que um pedido foi salvo
   /// com sucesso na base de dados.
   void salvarPedido() {

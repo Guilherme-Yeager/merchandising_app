@@ -527,9 +527,14 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                 );
 
                                 /// Inserindo corpo do pedido.
-                                await pedidoViewModel.inserirCorpoPedido(
-                                  pedcorpModel,
-                                );
+                                bool pedidoInserido = await pedidoViewModel
+                                    .inserirCorpoPedido(pedcorpModel);
+
+                                /// Atualizando o código importado.
+                                if (pedidoInserido) {
+                                  await pedidoViewModel
+                                      .atualizarImportadoPedCab(codigoPedido);
+                                }
                               } on ServiceException catch (exception) {
                                 if (exception.tipo == TipoErro.offline) {
                                   await Future.delayed(Duration(seconds: 1));

@@ -57,4 +57,18 @@ class PedidoService {
       throw ServiceException(exception);
     }
   }
+
+  /// Atualiza o campo importado do cabeçalho do pedido para 9, onde indica
+  /// para o supabase para levar o pedido para o ERP.
+  Future<void> updateImportadoPedCab(int codigoPedido) async {
+    try {
+      await Supabase.instance.client
+          .from('polibras_pedcab')
+          .update({'importado': 9})
+          .eq('codigo_pedido', codigoPedido);
+      return;
+    } on Exception catch (exception) {
+      throw ServiceException(exception);
+    }
+  }
 }

@@ -26,4 +26,12 @@ class PedidoRepositoryImpl implements PedidoRepository {
       rethrow;
     }
   }
+
+  Future<void> updateImportadoPedCab(int codigoPedido) async {
+    try {
+      await pedidoService.updateImportadoPedCab(codigoPedido);
+    } on ServiceException {
+      rethrow;
+    }
+  }
 }
