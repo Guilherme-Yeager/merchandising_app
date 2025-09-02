@@ -48,6 +48,17 @@ jobs:
         run: flutter pub get
         working-directory: Codigo
 
+      - name: Create key.properties
+        run: |
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" > Codigo/android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> Codigo/android/key.properties
+          echo "storeFile=upload-keystore.jks" >> Codigo/android/key.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> Codigo/android/key.properties
+
+      - name: Decode and place keystore.jks
+        run: |
+          echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 -d > Codigo/android/app/upload-keystore.jks
+
       - name: Build APK (Debug)
         run: flutter build apk --debug
         working-directory: Codigo
