@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:merchandising_app/config/supabase/supabase_config.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/auth/logout/widgets/logout_screen.dart';
+import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
@@ -23,8 +24,13 @@ class _MenuScreenState extends State<MenuScreen> {
       listen: false,
     );
 
+    final ClienteViewModel clienteViewModel = Provider.of<ClienteViewModel>(
+      context,
+      listen: false,
+    );
+
     // Cards
-    final List<InkWell> cards = _getInkWells(loginViewModel);
+    final List<InkWell> cards = _getInkWells(loginViewModel, clienteViewModel);
 
     return Scaffold(
       backgroundColor: AppColors.mainColor,
@@ -48,7 +54,10 @@ class _MenuScreenState extends State<MenuScreen> {
   /// as opções do menu.
   ///
   /// - [loginViewModel] é  ViewModel de login
-  List<InkWell> _getInkWells(LoginViewModel loginViewModel) {
+  List<InkWell> _getInkWells(
+    LoginViewModel loginViewModel,
+    ClienteViewModel clienteViewModel,
+  ) {
     return [
       InkWell(
         onTap: () {
@@ -96,6 +105,7 @@ class _MenuScreenState extends State<MenuScreen> {
               );
               AppLogger.instance.i("Usuário confirmou o logout.");
             }
+            clienteViewModel.limparClienteSelecionado();
           } else {
             AppLogger.instance.i("Usuário cancelou o logout.");
           }

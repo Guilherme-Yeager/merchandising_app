@@ -5,18 +5,18 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 class ProdutoService {
   /// Retorna todos os produtos do usuário logado da base de dados.
   ///
-  /// - [idUser]: código do usuário logado.
+  /// - [codLinhaProd]: código da linha do produto do usuário logado.
   ///
   /// Retorna um `List<Map<String, dynamic>>` com os dados de todos os produtos,
   /// ou uma lista vazia, caso não haja nenhum.
   /// Caso ocorra algum erro durante a consulta, uma [ServiceException]
   /// será lançada contendo informações sobre o tipo de erro ocorrido.
-  Future<List<Map<String, dynamic>>> obterTodos(int idUser) async {
+  Future<List<Map<String, dynamic>>> obterTodos(int codLinhaProd) async {
     try {
       return await Supabase.instance.client
           .from('vw_merchandising_produtos')
           .select('codprod, descricao, qtest, pvenda')
-          .eq('codlinhaprod', idUser);
+          .eq('codlinhaprod', codLinhaProd);
     } on Exception catch (exception) {
       throw ServiceException(exception);
     }

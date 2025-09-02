@@ -64,8 +64,12 @@ class LoginViewModel extends ChangeNotifier {
     final User? user = Supabase.instance.client.auth.currentUser;
     try {
       Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
-      response!["email"] = user.email;
+      if (response == null) {
+        throw ServiceException("invalid login");
+      }
+      response["email"] = user.email;
       _userModel = UserModel.fromJson(response);
+      notifyListeners();
     } on ServiceException {
       rethrow;
     }
@@ -82,6 +86,7 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> carregarDependencias(
     ClienteViewModel clienteViewModel,
     ProdutoViewModel produtoViewModel,
+    int codLinhaProd,
   ) async {
     try {
       await clienteViewModel.updateClientes(_userModel!.codusur);
@@ -91,6 +96,7 @@ class LoginViewModel extends ChangeNotifier {
       );
       SupabaseConfig.inscribeRealTimeChangeProduto(
         produtoViewModel.updateProdutos,
+        codLinhaProd,
       );
     } on ServiceException {
       rethrow;

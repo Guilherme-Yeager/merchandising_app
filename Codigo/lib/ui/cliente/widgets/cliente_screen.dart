@@ -338,9 +338,13 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
                           /// Atualiza os produtos
                           try {
-                            await produtoViewModel.updateProdutos(
-                              loginViewModel.userModel!.codusur,
-                            );
+                            int? codLinhaProd =
+                                loginViewModel.userModel!.codLinhaProd;
+                            if (codLinhaProd != null) {
+                              await produtoViewModel.updateProdutos(
+                                loginViewModel.userModel!.codLinhaProd!,
+                              );
+                            }
                           } on ServiceException catch (exception) {
                             if (exception.tipo == TipoErro.offline) {
                               await Future.delayed(Duration(seconds: 1));

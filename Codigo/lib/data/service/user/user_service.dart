@@ -17,7 +17,7 @@ class UserService {
     try {
       return await Supabase.instance.client
           .from('pcusuari')
-          .select('codusur, nome')
+          .select('codusur, nome, codlinhaprod')
           .eq('user_id', uuid)
           .maybeSingle();
     } on Exception catch (exception) {

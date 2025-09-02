@@ -54,7 +54,10 @@ abstract class SupabaseConfig {
   /// sobre qualquer alteração (inserção, atualização, deleção) na tabela `pcprodut`.
   ///
   /// [callback] é chamado sempre que uma alteração é detectada.
-  static void inscribeRealTimeChangeProduto(Function callback) {
+  static void inscribeRealTimeChangeProduto(
+    Function callback,
+    int codLinhaProd,
+  ) {
     Supabase.instance.client
         .channel('clients-realtime-changes')
         .onPostgresChanges(
@@ -65,7 +68,7 @@ abstract class SupabaseConfig {
             AppLogger.instance.w(
               "Alteração detectada em 'pcprodut': [tipo - ${payload.eventType}] | [codprod - ${payload.newRecord['codprod']}]",
             );
-            callback();
+            callback(codLinhaProd);
           },
         )
         .subscribe();

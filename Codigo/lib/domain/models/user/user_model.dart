@@ -9,12 +9,21 @@ class UserModel {
   /// Email do usuário.
   final String email;
 
-  UserModel({required this.codusur, required this.nome, required this.email});
+  /// Código da linha de produto associada ao usuário.
+  final int? codLinhaProd;
+
+  UserModel({
+    required this.codusur,
+    required this.nome,
+    required this.codLinhaProd,
+    required this.email,
+  });
 
   Map<String, dynamic> toJson() => {
     "codusur": codusur,
     "nome": nome,
     "email": email,
+    "codLinhaProd": codLinhaProd,
   };
 
   /// A desserialização trata os valores nulos colocando valores
@@ -23,6 +32,7 @@ class UserModel {
     return UserModel(
       codusur: json["codusur"],
       nome: json["nome"],
+      codLinhaProd: json["codlinhaprod"],
       email: json["email"],
     );
   }

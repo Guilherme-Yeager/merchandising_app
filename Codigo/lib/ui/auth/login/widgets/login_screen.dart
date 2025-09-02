@@ -131,6 +131,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                       await loginViewModel.carregarDependencias(
                                         clienteViewModel,
                                         produtoViewModel,
+                                        loginViewModel
+                                                .userModel!
+                                                .codLinhaProd ??
+                                            0,
                                       );
                                     } on ServiceException catch (exception) {
                                       if (exception.tipo == TipoErro.offline) {
