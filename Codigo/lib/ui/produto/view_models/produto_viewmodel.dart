@@ -20,8 +20,8 @@ class ProdutoViewModel extends ChangeNotifier {
 
   /// Busca todos produtos.
   /// Também registra mensagens de sucesso ou falha no [AppLogger].
-  Future<void> updateProdutos() async {
-    _produtos = await _produtoRepository.getAllProdutos();
+  Future<void> updateProdutos(int idUser) async {
+    _produtos = await _produtoRepository.getAllProdutos(idUser);
     _produtos.sort((a, b) => a.codprod.compareTo(b.codprod));
     _produtosComFiltro = List.from(_produtos);
     notifyListeners();

@@ -167,7 +167,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                           onRefresh: () async {
                             FocusScope.of(context).unfocus();
                             try {
-                              await produtoViewModel.updateProdutos();
+                              await produtoViewModel.updateProdutos(
+                                loginViewModel.userModel!.codusur,
+                              );
                             } on ServiceException catch (exception) {
                               if (exception.tipo == TipoErro.offline) {
                                 await Future.delayed(Duration(seconds: 1));

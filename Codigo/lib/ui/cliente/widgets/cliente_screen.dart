@@ -74,6 +74,7 @@ class _ClienteScreenState extends State<ClienteScreen> {
       clienteViewModel,
       homeViewModel,
       produtoViewModel,
+      loginViewModel,
     );
 
     return Scaffold(
@@ -188,10 +189,12 @@ class _ClienteScreenState extends State<ClienteScreen> {
   /// - [clienteViewModel] é o ViewModel que contém a lista de clientes filtrados.
   /// - [homeViewModel] é o ViewModel que gerencia o estado da tela inicial.
   /// - [produtoViewModel] é o ViewModel que gerencia os produtos.
+  /// - [loginViewModel] é o ViewModel que contém informações do usuário logado.
   List<Card> _getClientes(
     ClienteViewModel clienteViewModel,
     HomeViewModel homeViewModel,
     ProdutoViewModel produtoViewModel,
+    LoginViewModel loginViewModel,
   ) {
     List<ClienteModel> clientes = clienteViewModel.clientesComFiltro;
     if (clientes.isEmpty) {
@@ -335,7 +338,9 @@ class _ClienteScreenState extends State<ClienteScreen> {
 
                           /// Atualiza os produtos
                           try {
-                            await produtoViewModel.updateProdutos();
+                            await produtoViewModel.updateProdutos(
+                              loginViewModel.userModel!.codusur,
+                            );
                           } on ServiceException catch (exception) {
                             if (exception.tipo == TipoErro.offline) {
                               await Future.delayed(Duration(seconds: 1));

@@ -9,10 +9,10 @@ class ProdutoRepositoryImpl implements ProdutoRepository {
   ProdutoRepositoryImpl({required this.produtoService});
 
   @override
-  Future<List<ProdutoModel>> getAllProdutos() async {
+  Future<List<ProdutoModel>> getAllProdutos(int idUser) async {
     try {
-      final List<Map<String, dynamic>> response =
-          await produtoService.obterTodos();
+      final List<Map<String, dynamic>> response = await produtoService
+          .obterTodos(idUser);
       return response.map((pedido) => ProdutoModel.fromJson(pedido)).toList();
     } on ServiceException {
       rethrow;
