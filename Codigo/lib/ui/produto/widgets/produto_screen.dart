@@ -451,9 +451,11 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                             size: 32,
                                           ),
                                           onPressed: () {
-                                            if (quantidade < maxValor ||
-                                                quantidade <
-                                                    produto.qtest.toInt()) {
+                                            if (quantidade ==
+                                                produto.qtest.toInt()) {
+                                              return;
+                                            }
+                                            if (quantidade < maxValor) {
                                               setState(() {
                                                 quantidade++;
                                                 quantidadeController.text =
