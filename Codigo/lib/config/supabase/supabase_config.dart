@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 abstract class SupabaseConfig {
   /// Indica se já existe inscrição ativa em canais de realtime.
   static bool isInscribeChannels = false;
+  static bool atualizandoProdutos = false;
+  static bool atualizandoClientes = false;
 
   /// Inicializa o Supabase com as variáveis de ambiente `URL` e `ANONKEY`.
   ///
@@ -31,16 +33,21 @@ abstract class SupabaseConfig {
           schema: 'public',
           table: 'pcclient',
           event: PostgresChangeEvent.all,
-          callback: (payload) {
+          callback: (payload) async {
             AppLogger.instance.w(
               "Alteração detectada em 'pcclient': [tipo - ${payload.eventType}] | [codcli - ${payload.newRecord['codcli']}] | [codusur - ${payload.newRecord['codusur']}]",
             );
+            if (atualizandoProdutos) {
+              return;
+            }
+            atualizandoProdutos = true;
 
             /// Caso a alteração seja de um cliente associado ao usuário,
             /// chama o callback para atualizar a lista de clientes.
             if (payload.newRecord['codusur'] == codusur) {
-              callback(codusur);
+              await callback(codusur);
             }
+            atualizandoProdutos = false;
           },
         )
         .subscribe();
@@ -64,11 +71,16 @@ abstract class SupabaseConfig {
           schema: 'public',
           table: 'pcprodut',
           event: PostgresChangeEvent.all,
-          callback: (payload) {
+          callback: (payload) async {
             AppLogger.instance.w(
               "Alteração detectada em 'pcprodut': [tipo - ${payload.eventType}] | [codprod - ${payload.newRecord['codprod']}]",
             );
-            callback(codLinhaProd);
+            if (atualizandoClientes) {
+              return;
+            }
+            atualizandoClientes = true;
+            await callback(codLinhaProd);
+            atualizandoClientes = false;
           },
         )
         .subscribe();

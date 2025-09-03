@@ -413,7 +413,12 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                             onChanged: (value) {
                                               int novoValor =
                                                   int.tryParse(value) ?? 1;
-                                              if (novoValor != quantidade) {
+                                              if (novoValor > maxValor ||
+                                                  novoValor >
+                                                      produto.qtest.toInt()) {
+                                                novoValor = quantidade;
+                                              } else if (novoValor !=
+                                                  quantidade) {
                                                 quantidade = novoValor;
                                               }
                                               quantidadeController.text =
@@ -446,7 +451,9 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                             size: 32,
                                           ),
                                           onPressed: () {
-                                            if (quantidade < maxValor) {
+                                            if (quantidade < maxValor ||
+                                                quantidade <
+                                                    produto.qtest.toInt()) {
                                               setState(() {
                                                 quantidade++;
                                                 quantidadeController.text =
