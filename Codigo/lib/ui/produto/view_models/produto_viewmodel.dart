@@ -21,7 +21,7 @@ class ProdutoViewModel extends ChangeNotifier {
   /// Busca todos produtos.
   /// Também registra mensagens de sucesso ou falha no [AppLogger].
   Future<void> updateProdutos(int codLinhaProd) async {
-    _produtos = await _produtoRepository.getAllProdutos(codLinhaProd);
+    _produtos = await _produtoRepository.obterTodos(codLinhaProd);
     _produtos.sort((a, b) => a.codprod.compareTo(b.codprod));
     _produtosComFiltro = List.from(_produtos);
     notifyListeners();
@@ -63,7 +63,7 @@ class ProdutoViewModel extends ChangeNotifier {
   /// informações sobre o tipo de erro ocorrido.
   Future<double?> getPrecoVenda(int codProd) async {
     try {
-      return _produtoRepository.getPrecoVenda(codProd);
+      return _produtoRepository.obterPrecoVenda(codProd);
     } on ServiceException {
       rethrow;
     }

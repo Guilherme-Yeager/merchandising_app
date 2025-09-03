@@ -12,11 +12,12 @@ class UserRepositoryImpl implements UserRepository {
   ///
   /// - [uuid]: identificador do usuário.
   ///
-  /// Retorna `Map<String, dynamic>` (json) contendo código e
-  /// nome do usuário.
-  /// Retorna `null` caso nenhum usuário seja encontrado.
+  /// Retorna `Map<String, dynamic>` contendo código e nome do usuário ou
+  /// retorna `null` caso nenhum usuário seja encontrado.
+  /// Caso ocorra algum erro durante a consulta, uma [ServiceException] será lançada
+  /// contendo informações sobre o tipo de erro ocorrido.
   @override
-  Future<Map<String, dynamic>?> getUser(String uuid) async {
+  Future<Map<String, dynamic>?> obterUsuario(String uuid) async {
     try {
       return await userService.obterUsuario(uuid);
     } on ServiceException {

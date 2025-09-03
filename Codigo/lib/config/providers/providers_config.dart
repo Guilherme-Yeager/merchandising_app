@@ -2,7 +2,7 @@ import 'package:merchandising_app/data/repositories/auth/login_repository_impl.d
 import 'package:merchandising_app/data/repositories/auth/logout_repository_impl.dart';
 import 'package:merchandising_app/data/repositories/cliente/cliente_repository_impl.dart';
 import 'package:merchandising_app/data/repositories/pedido/pedido_repository_impl.dart';
-import 'package:merchandising_app/data/repositories/produto/pedido_repository_impl.dart';
+import 'package:merchandising_app/data/repositories/produto/produto_repository_impl.dart';
 import 'package:merchandising_app/data/repositories/user/user_repository_impl.dart';
 import 'package:merchandising_app/data/service/auth/login_service.dart';
 import 'package:merchandising_app/data/service/auth/logout_service.dart';

@@ -63,7 +63,9 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> carregarUsuario() async {
     final User? user = Supabase.instance.client.auth.currentUser;
     try {
-      Map<String, dynamic>? response = await _userRepository.getUser(user!.id);
+      Map<String, dynamic>? response = await _userRepository.obterUsuario(
+        user!.id,
+      );
       if (response == null) {
         throw ServiceException("invalid login");
       }

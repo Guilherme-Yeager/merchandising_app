@@ -49,7 +49,7 @@ class PedidoViewModel extends ChangeNotifier {
   ///  Uma [ServiceException] será lançada contendo informações sobre o tipo de erro ocorrido.
   Future<void> atualizarImportadoPedCab(int codigoPedido) async {
     try {
-      return _pedidoRepository.updateImportadoPedCab(codigoPedido);
+      return _pedidoRepository.atualizarImportadoCabecalho(codigoPedido);
     } on ServiceException {
       rethrow;
     }

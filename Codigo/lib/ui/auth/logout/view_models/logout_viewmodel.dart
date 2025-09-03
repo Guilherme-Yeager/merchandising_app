@@ -10,6 +10,6 @@ class LogoutViewModel extends ChangeNotifier {
 
   /// Desconecta o usuário atual, se houver um usuário conectado.
   Future<void> logout() async {
-    await _logoutReppository.logout();
+    await _logoutReppository.sair();
   }
 }

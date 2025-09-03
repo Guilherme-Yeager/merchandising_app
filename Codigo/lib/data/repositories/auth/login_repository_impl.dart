@@ -18,6 +18,8 @@ class LoginRepositoryImpl implements LoginRepository {
   /// - [password]: senha do usuário.
   ///
   /// Retorna `null` se o login falhar ou se os dados do usuário não forem encontrados.
+  /// Caso ocorra algum erro durante a consulta, uma [ServiceException] será lançada
+  /// contendo informações sobre o tipo de erro ocorrido.
   @override
   Future<UserModel?> login(String email, String password) async {
     UserModel? userModel;
