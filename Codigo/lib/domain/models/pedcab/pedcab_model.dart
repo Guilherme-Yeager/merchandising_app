@@ -3,7 +3,7 @@ class PedcabModel {
   final String dataPedido;
   final String codigoVendedor;
   final String codigoCliente;
-  final String codigoCobranca = 'D';
+  final String codigoCobranca = 'MKTN';
   final String codigoPlanoPagamento = '10';
   final String codigoTabela = '1';
   final String tipoVenda = '1';

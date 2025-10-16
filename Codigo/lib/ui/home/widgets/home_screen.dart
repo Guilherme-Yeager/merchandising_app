@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               homeViewModel.titleAppBar == ""
-                  ? "Home"
+                  ? "Controle TL"
                   : homeViewModel.titleAppBar,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26.0),
             ),
