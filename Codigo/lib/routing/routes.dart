@@ -4,6 +4,7 @@ import 'package:merchandising_app/ui/menu/widgets/menu_screen.dart';
 import 'package:merchandising_app/ui/home/widgets/home_screen.dart';
 import 'package:merchandising_app/ui/cliente/widgets/cliente_screen.dart';
 import 'package:merchandising_app/ui/produto/widgets/produto_screen.dart';
+import 'package:merchandising_app/ui/resumo/widgets/resumo_screen.dart';
 import 'package:merchandising_app/ui/splash/widgets/splash_screen.dart';
 
 abstract class Routes {
@@ -14,6 +15,7 @@ abstract class Routes {
   static const cliente = "/cliente";
   static const perfil = "/perfil";
   static const produto = "/produto";
+  static const resumo = "/resumo";
 
   static Map<String, WidgetBuilder> getRoutes() {
     return {
@@ -23,6 +25,7 @@ abstract class Routes {
       menu: (context) => MenuScreen(),
       cliente: (context) => ClienteScreen(),
       produto: (context) => ProdutoScreen(),
+      resumo: (context) => ResumoScreen(),
     };
   }
 }

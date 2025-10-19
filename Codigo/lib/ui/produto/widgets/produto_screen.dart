@@ -1,13 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
-import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
-import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
-import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/error_screen.dart';
@@ -73,47 +69,88 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            Align(
-              alignment: Alignment.centerLeft,
-              child: FractionallySizedBox(
-                widthFactor: 0.38,
-                child: InkWell(
-                  onTap: () {
-                    FocusScope.of(context).unfocus();
-                    DialogCustom.showDialogWarning(
-                      context: context,
-                      title: "Cancelar",
-                      message:
-                          "Tem certeza que deseja cancelar?\n As alterações serão perdidas.",
-                    ).then((result) {
-                      if (result == true) {
-                        if (context.mounted) {
-                          retornaScreenCliente(homeViewModel, clienteViewModel);
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: InkWell(
+                    onTap: () {
+                      FocusScope.of(context).unfocus();
+                      DialogCustom.showDialogWarning(
+                        context: context,
+                        title: "Cancelar",
+                        message:
+                            "Tem certeza que deseja cancelar?\n As alterações serão perdidas.",
+                      ).then((result) {
+                        if (result == true) {
+                          if (context.mounted) {
+                            retornaScreenCliente(
+                              homeViewModel,
+                              clienteViewModel,
+                            );
+                          }
                         }
-                      }
-                    });
-                  },
-                  child: Row(
-                    textBaseline: TextBaseline.alphabetic,
-                    children: const [
-                      Icon(
-                        Icons.arrow_back_outlined,
-                        color: Colors.white,
-                        size: 22,
-                      ),
-                      SizedBox(width: 8),
-                      Text(
-                        "Cancelar",
-                        style: TextStyle(
+                      });
+                    },
+                    child: Row(
+                      textBaseline: TextBaseline.alphabetic,
+                      children: const [
+                        Icon(
+                          Icons.arrow_back_outlined,
                           color: Colors.white,
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                          size: 22,
                         ),
-                      ),
-                    ],
+                        SizedBox(width: 8),
+                        Text(
+                          "Cancelar",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
-              ),
+                if (produtoViewModel.produtosSelecionados.isNotEmpty)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: InkWell(
+                      onTap: () {
+                        homeViewModel.updateTitleAppBar("Resumo do Pedido");
+                        produtoViewModel.exibirTelaResumo = true;
+                        homeViewModel.updateSubtitleAppBar(null);
+                      },
+                      child: Row(
+                        textBaseline: TextBaseline.alphabetic,
+                        children: const [
+                          Icon(
+                            Icons.save_rounded,
+                            color: Colors.white,
+                            size: 20,
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            "Salvar",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          SizedBox(width: 8),
+                          Icon(
+                            Icons.arrow_forward_outlined,
+                            color: Colors.white,
+                            size: 22,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
             ),
             const SizedBox(height: 10),
             SearchBar(
@@ -477,116 +514,19 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                                 );
                               },
                             ),
-                            confirmBtnText: "Salvar",
+                            confirmBtnText: "Adicionar",
                             onConfirmBtnTap: () async {
                               /// Se já estiver salvando um pedido não vai salvar
                               /// novamente ao mesmo tempo.
                               FocusScope.of(context).unfocus();
 
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                barrierColor: Colors.black54,
-                                builder: (BuildContext context) {
-                                  return const Center(
-                                    child: CircularProgressIndicator(
-                                      color: Colors.lightBlueAccent,
-                                    ),
-                                  );
-                                },
+                              produtoViewModel.selecionarProduto(
+                                produto,
+                                quantidade,
                               );
-
-                              /// Modelo do cabeçalho do pedido
-                              PedcabModel pedcabModel = PedcabModel(
-                                dataPedido: DateFormat(
-                                  'dd/MM/yyyy',
-                                ).format(DateTime.now()),
-                                codigoVendedor:
-                                    loginViewModel.userModel!.codusur
-                                        .toString(),
-                                codigoCliente:
-                                    clienteViewModel.clienteSelecionado!.codcli
-                                        .toString(),
-                              );
-
-                              AppLogger.instance.i(
-                                "Cabeçalho do pedido: ${pedcabModel.dataPedido} | ${pedcabModel.codigoVendedor} | ${pedcabModel.codigoCliente}",
-                              );
-
-                              /// Inserindo cabeçalho do pedido e obtendo o código do mesmo.
-                              try {
-                                final int codigoPedido = await pedidoViewModel
-                                    .inserirCabecalhoPedido(pedcabModel);
-
-                                double? precoVenda = await produtoViewModel
-                                    .getPrecoVenda(produto.codprod);
-
-                                if (precoVenda == null) {
-                                  AppLogger.instance.w(
-                                    "O produto não possui preço de venda.",
-                                  );
-                                  precoVenda = 0;
-                                }
-
-                                /// Modelo do corpo do pedido
-                                PedcorpModel pedcorpModel = PedcorpModel(
-                                  codigoPedido: codigoPedido,
-                                  codigoProduto: produto.codprod.toString(),
-                                  quantidade: quantidade,
-                                  precoVenda: precoVenda,
-                                  precoBase: precoVenda,
-                                );
-
-                                AppLogger.instance.i(
-                                  "Corpo do pedido: ${pedcorpModel.codigoPedido} | ${pedcorpModel.codigoProduto} | ${pedcorpModel.quantidade} | ${pedcorpModel.precoVenda} | ${pedcorpModel.precoVenda}",
-                                );
-
-                                /// Inserindo corpo do pedido.
-                                bool pedidoInserido = await pedidoViewModel
-                                    .inserirCorpoPedido(pedcorpModel);
-
-                                /// Atualizando o código importado.
-                                if (pedidoInserido) {
-                                  await pedidoViewModel
-                                      .atualizarImportadoPedCab(codigoPedido);
-                                }
-                              } on ServiceException catch (exception) {
-                                if (exception.tipo == TipoErro.offline) {
-                                  await Future.delayed(Duration(seconds: 1));
-                                  if (mounted) {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => OfflineScreen(),
-                                      ),
-                                    );
-                                    return;
-                                  }
-                                } else {
-                                  await Future.delayed(Duration(seconds: 1));
-                                  if (mounted) {
-                                    Navigator.pushReplacement(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder:
-                                            (_) => ErrorScreen(
-                                              mensagem: exception.mensagem,
-                                            ),
-                                      ),
-                                    );
-                                  }
-                                  return;
-                                }
-                              }
 
                               if (mounted) {
                                 Navigator.pop(context);
-                                Navigator.pop(context);
-                                pedidoViewModel.salvarPedido();
-                                retornaScreenCliente(
-                                  homeViewModel,
-                                  clienteViewModel,
-                                );
                               }
                             },
                           );

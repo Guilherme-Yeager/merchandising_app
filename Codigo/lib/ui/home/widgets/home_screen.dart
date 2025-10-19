@@ -45,9 +45,11 @@ class _HomeScreenState extends State<HomeScreen> {
     final List<Widget> bottomBarPages = [
       routesMap[Routes.menu]?.call(context) ?? SizedBox.shrink(),
 
-      /// Se houver um cliente selecionado, exibe a tela de pedido
+      /// Se houver um cliente selecionado, exibe a tela de pedido ou resumo
       clienteViewModel.clienteSelecionado != null
-          ? routesMap[Routes.produto]?.call(context) ?? SizedBox.shrink()
+          ? produtoViewModel.exibirTelaResumo
+              ? routesMap[Routes.resumo]?.call(context) ?? SizedBox.shrink()
+              : routesMap[Routes.produto]?.call(context) ?? SizedBox.shrink()
           : routesMap[Routes.cliente]?.call(context) ?? SizedBox.shrink(),
     ];
 
@@ -164,11 +166,16 @@ class _HomeScreenState extends State<HomeScreen> {
               /// Caso haja um cliente seleconado, altera o título do AppBar
               /// para "Pedido", caso contrário, mantém "Clientes"
               if (clienteViewModel.clienteSelecionado != null) {
-                produtoViewModel.limparFiltro();
-                homeViewModel.updateTitleAppBar("Produtos");
-                homeViewModel.updateSubtitleAppBar(
-                  "Total: ${produtoViewModel.produtosComFiltro.length}",
-                );
+                if (produtoViewModel.exibirTelaResumo) {
+                  homeViewModel.updateTitleAppBar("Resumo do Pedido");
+                  homeViewModel.updateSubtitleAppBar(null);
+                } else {
+                  produtoViewModel.limparFiltro();
+                  homeViewModel.updateTitleAppBar("Produtos");
+                  homeViewModel.updateSubtitleAppBar(
+                    "Total: ${produtoViewModel.produtosComFiltro.length}",
+                  );
+                }
               } else {
                 clienteViewModel.limparFiltro();
                 homeViewModel.updateTitleAppBar("Clientes");
