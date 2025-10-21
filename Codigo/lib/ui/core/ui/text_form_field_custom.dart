@@ -25,4 +25,20 @@ abstract class TextFormFieldCustom {
       ),
     );
   }
+
+  static TextFormField buildTextFormFieldObservation({int maxLines = 4}) {
+    return TextFormField(
+      maxLines: maxLines,
+      decoration: InputDecoration(
+        labelStyle: TextStyle(
+          color: Colors.black,
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        filled: true,
+        fillColor: Colors.white,
+      ),
+    );
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:merchandising_app/domain/models/cliente/cliente_model.dart';
+import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/domain/models/user/user_model.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 
@@ -157,6 +158,88 @@ abstract class ShowModalCustom {
                     TextFormFieldCustom.buildTextFormField(
                       initialValue: userModel.email,
                       labelText: "E-mail",
+                    ),
+                    const SizedBox(height: 15),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  /// Exbie um `showModalBottomSheet` com informações do produto.
+  ///
+  /// - [context] contexto fornecido.
+  /// - [produto] modelo do produto para exibição dos detalhes.
+  static Future<void> mostrarDetalhesProduto(
+    BuildContext context,
+    ProdutoModel produto,
+  ) async {
+    await showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      builder: (BuildContext context) {
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(
+              horizontal: 20.0,
+              vertical: 25.0,
+            ),
+            child: ScrollbarTheme(
+              data: ScrollbarThemeData(crossAxisMargin: -10.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(height: 15),
+                    IconButton(
+                      onPressed: () => Navigator.of(context).pop(),
+                      icon: Icon(Icons.close_outlined),
+                    ),
+                    Center(
+                      child: Text(
+                        "Detalhes do Produto",
+                        style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 25),
+                    Row(
+                      children: [
+                        Flexible(
+                          child: TextFormFieldCustom.buildTextFormField(
+                            initialValue: produto.codprod.toString(),
+                            labelText: "Código",
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Flexible(
+                          child: TextFormFieldCustom.buildTextFormField(
+                            initialValue: produto.pvenda.toString(),
+                            labelText: "Preço de Venda",
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+                    TextFormFieldCustom.buildTextFormField(
+                      initialValue: produto.descricao,
+                      labelText: "Nome",
+                    ),
+                    const SizedBox(height: 15),
+                    FractionallySizedBox(
+                      widthFactor: 0.62,
+                      child: TextFormFieldCustom.buildTextFormField(
+                        initialValue: produto.qtest.toString(),
+                        labelText: "Quantidade disponível",
+                      ),
                     ),
                     const SizedBox(height: 15),
                   ],

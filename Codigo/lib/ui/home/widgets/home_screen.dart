@@ -18,8 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final PageController _pageController = PageController(initialPage: 0);
-  final NotchBottomBarController _notchBottomBarController =
-      NotchBottomBarController(index: 0);
+  int _bottomBarIndex = 0;
 
   @override
   void dispose() {
@@ -62,7 +61,7 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Text(
               homeViewModel.titleAppBar == ""
-                  ? "Controle TL"
+                  ? "Controle de Merchandising"
                   : homeViewModel.titleAppBar,
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 26.0),
             ),
@@ -71,7 +70,8 @@ class _HomeScreenState extends State<HomeScreen> {
               Row(
                 children: [
                   Icon(
-                    homeViewModel.titleAppBar == "Produtos"
+                    homeViewModel.titleAppBar == "Produtos" ||
+                            produtoViewModel.exibirTelaResumo
                         ? Icons.production_quantity_limits_outlined
                         : Icons.group_outlined,
                     size: 21.3,
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> {
               Align(
                 alignment: Alignment.centerLeft,
                 child: FractionallySizedBox(
-                  widthFactor: 0.52,
+                  widthFactor: 0.25,
                   child: InkWell(
                     onTap: () async {
                       await ShowModalCustom.mostrarDetalhesCliente(
@@ -106,7 +106,37 @@ class _HomeScreenState extends State<HomeScreen> {
                         Icon(Icons.contact_page_outlined, size: 21.3),
                         SizedBox(width: 5),
                         Text(
-                          "Cliente Selecionado",
+                          "Cliente",
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 16.0,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ],
+            if (produtoViewModel.exibirTelaResumo) ...[
+              SizedBox(height: 4),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: FractionallySizedBox(
+                  widthFactor: 0.25,
+                  child: InkWell(
+                    onTap: () async {
+                      await ShowModalCustom.mostrarDetalhesCliente(
+                        context,
+                        clienteViewModel.clienteSelecionado!,
+                      );
+                    },
+                    child: Row(
+                      children: [
+                        Icon(Icons.contact_page_outlined, size: 21.3),
+                        SizedBox(width: 5),
+                        Text(
+                          "Cliente",
                           style: TextStyle(
                             fontStyle: FontStyle.italic,
                             fontSize: 16.0,
@@ -130,65 +160,88 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       extendBody: true,
-      bottomNavigationBar: SafeArea(
-        child: AnimatedNotchBottomBar(
-          notchBottomBarController: _notchBottomBarController,
-          color: Colors.white,
-          showLabel: true,
-          textOverflow: TextOverflow.visible,
-          maxLine: 1,
-          shadowElevation: 5,
-          kBottomRadius: 16.0,
-          notchColor: AppColors.activeMenu,
-          removeMargins: false,
-          bottomBarWidth: 500,
-          showShadow: false,
-          durationInMilliSeconds: 300,
-          elevation: 1,
-          bottomBarItems: const [
-            BottomBarItem(
-              inActiveItem: Icon(Icons.home_outlined, color: Colors.black),
-              activeItem: Icon(Icons.home_outlined, color: Colors.black),
-            ),
-            BottomBarItem(
-              inActiveItem: Icon(Icons.group_outlined, color: Colors.black),
-              activeItem: Icon(Icons.group_outlined, color: Colors.black),
-            ),
-          ],
-          onTap: (index) {
-            AppLogger.instance.i(
-              "Página selecionada: ${bottomBarPages[index]}",
-            );
-            if (index == 0) {
-              homeViewModel.updateTitleAppBar("");
-              homeViewModel.updateSubtitleAppBar(null);
-            } else if (index == 1) {
-              /// Caso haja um cliente seleconado, altera o título do AppBar
-              /// para "Pedido", caso contrário, mantém "Clientes"
-              if (clienteViewModel.clienteSelecionado != null) {
-                if (produtoViewModel.exibirTelaResumo) {
-                  homeViewModel.updateTitleAppBar("Resumo do Pedido");
-                  homeViewModel.updateSubtitleAppBar(null);
-                } else {
-                  produtoViewModel.limparFiltro();
-                  homeViewModel.updateTitleAppBar("Produtos");
-                  homeViewModel.updateSubtitleAppBar(
-                    "Total: ${produtoViewModel.produtosComFiltro.length}",
-                  );
-                }
-              } else {
-                clienteViewModel.limparFiltro();
-                homeViewModel.updateTitleAppBar("Clientes");
-                homeViewModel.updateSubtitleAppBar(
-                  "Total: ${clienteViewModel.clientesComFiltro.length}",
-                );
-              }
-            }
-            _pageController.jumpToPage(index);
-          },
-          kIconSize: 24.0,
-        ),
-      ),
+      bottomNavigationBar:
+          produtoViewModel.exibirTelaResumo
+              ? null
+              : SafeArea(
+                child: AnimatedNotchBottomBar(
+                  notchBottomBarController: NotchBottomBarController(
+                    index: _bottomBarIndex,
+                  ),
+                  color: Colors.white,
+                  showLabel: true,
+                  textOverflow: TextOverflow.visible,
+                  maxLine: 1,
+                  shadowElevation: 5,
+                  kBottomRadius: 16.0,
+                  notchColor: AppColors.activeMenu,
+                  removeMargins: false,
+                  bottomBarWidth: 500,
+                  showShadow: false,
+                  durationInMilliSeconds: 300,
+                  elevation: 1,
+                  bottomBarItems: const [
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.home_outlined,
+                        color: Colors.black,
+                      ),
+                      activeItem: Icon(
+                        Icons.home_outlined,
+                        color: Colors.black,
+                      ),
+                    ),
+                    BottomBarItem(
+                      inActiveItem: Icon(
+                        Icons.group_outlined,
+                        color: Colors.black,
+                      ),
+                      activeItem: Icon(
+                        Icons.group_outlined,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                  onTap: (index) {
+                    AppLogger.instance.i(
+                      "Página selecionada: ${bottomBarPages[index]}",
+                    );
+                    if (index == 0) {
+                      homeViewModel.updateTitleAppBar("");
+                      homeViewModel.updateSubtitleAppBar(null);
+                    } else if (index == 1) {
+                      /// Caso haja um cliente seleconado, altera o título do AppBar
+                      /// para "Pedido", caso contrário, mantém "Clientes"
+                      if (clienteViewModel.clienteSelecionado != null) {
+                        if (produtoViewModel.exibirTelaResumo) {
+                          homeViewModel.updateTitleAppBar("Resumo do Pedido");
+                          homeViewModel.updateSubtitleAppBar(null);
+                          homeViewModel.updateSubtitleAppBar(
+                            "Produtos Selecionados: ${produtoViewModel.produtosSelecionados.values.length}",
+                          );
+                        } else {
+                          produtoViewModel.limparFiltro();
+                          homeViewModel.updateTitleAppBar("Produtos");
+                          homeViewModel.updateSubtitleAppBar(
+                            "Total: ${produtoViewModel.produtosComFiltro.length}",
+                          );
+                        }
+                      } else {
+                        clienteViewModel.limparFiltro();
+                        homeViewModel.updateTitleAppBar("Clientes");
+                        homeViewModel.updateSubtitleAppBar(
+                          "Total: ${clienteViewModel.clientesComFiltro.length}",
+                        );
+                      }
+                    }
+                    setState(() {
+                      _bottomBarIndex = index;
+                    });
+                    _pageController.jumpToPage(index);
+                  },
+                  kIconSize: 24.0,
+                ),
+              ),
     );
   }
 }

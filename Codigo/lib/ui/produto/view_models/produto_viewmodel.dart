@@ -31,7 +31,6 @@ class ProdutoViewModel extends ChangeNotifier {
     _produtos = await _produtoRepository.obterTodos(codLinhaProd);
     _produtos.sort((a, b) => a.codprod.compareTo(b.codprod));
     _produtosComFiltro = List.from(_produtos);
-    _produtosSelecionados.clear();
     notifyListeners();
     AppLogger.instance.i("Produtos atualizados.");
   }
@@ -84,6 +83,11 @@ class ProdutoViewModel extends ChangeNotifier {
 
   void removerProdutoSelecionado(ProdutoModel produto) {
     _produtosSelecionados.remove(produto);
+    notifyListeners();
+  }
+
+  void limparProdutosSelecionados() {
+    _produtosSelecionados.clear();
     notifyListeners();
   }
 }

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:merchandising_app/data/service/exception/service_exception.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
@@ -13,8 +12,6 @@ import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
 import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/models/quickalert_type.dart';
-import 'package:quickalert/widgets/quickalert_dialog.dart';
 
 class ProdutoScreen extends StatefulWidget {
   const ProdutoScreen({super.key});
@@ -88,6 +85,7 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                             retornaScreenCliente(
                               homeViewModel,
                               clienteViewModel,
+                              produtoViewModel,
                             );
                           }
                         }
@@ -114,42 +112,41 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                     ),
                   ),
                 ),
-                if (produtoViewModel.produtosSelecionados.isNotEmpty)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: InkWell(
-                      onTap: () {
-                        homeViewModel.updateTitleAppBar("Resumo do Pedido");
-                        produtoViewModel.exibirTelaResumo = true;
-                        homeViewModel.updateSubtitleAppBar(null);
-                      },
-                      child: Row(
-                        textBaseline: TextBaseline.alphabetic,
-                        children: const [
-                          Icon(
-                            Icons.save_rounded,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          SizedBox(width: 5),
-                          Text(
-                            "Salvar",
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          SizedBox(width: 8),
-                          Icon(
-                            Icons.arrow_forward_outlined,
-                            color: Colors.white,
-                            size: 22,
-                          ),
-                        ],
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: ElevatedButton.icon(
+                    onPressed: () {
+                      homeViewModel.updateTitleAppBar("Resumo do Pedido");
+                      produtoViewModel.exibirTelaResumo = true;
+                      homeViewModel.updateSubtitleAppBar(
+                        "Produtos Selecionados: ${produtoViewModel.produtosSelecionados.values.length}",
+                      );
+                    },
+                    icon: const Icon(
+                      Icons.save_rounded,
+                      color: Colors.white,
+                      size: 20,
+                    ),
+                    label: const Text(
+                      "Salvar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.buttonLogin,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 10,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
                       ),
                     ),
                   ),
+                ),
               ],
             ),
             const SizedBox(height: 10),
@@ -379,7 +376,6 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                         labelText: "Quantidade disponível",
                       ),
                     ),
-
                     const SizedBox(height: 10),
                     TextFormFieldCustom.buildTextFormField(
                       initialValue: produto.descricao,
@@ -390,145 +386,10 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
                     Center(
                       child: ElevatedButton(
                         onPressed: () async {
-                          int quantidade = 1;
-                          const int maxValor = 9999999;
-                          final TextEditingController quantidadeController =
-                              TextEditingController(
-                                text: quantidade.toString(),
-                              );
-                          await QuickAlert.show(
+                          await DialogCustom.showDialogQuantItens(
                             context: context,
-                            type: QuickAlertType.custom,
-                            widget: StatefulBuilder(
-                              builder: (context, setState) {
-                                return Column(
-                                  mainAxisSize: MainAxisSize.min,
-                                  children: [
-                                    Text(
-                                      'Produto ${produto.codprod}',
-                                      style: const TextStyle(
-                                        fontSize: 20,
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text('Quantidade'),
-                                    const SizedBox(height: 12),
-                                    Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: [
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.remove_circle,
-                                            color: Colors.blue,
-                                            size: 32,
-                                          ),
-                                          onPressed: () {
-                                            if (quantidade > 1) {
-                                              setState(() {
-                                                quantidade--;
-                                                quantidadeController.text =
-                                                    quantidade.toString();
-                                              });
-                                            }
-                                          },
-                                        ),
-                                        SizedBox(
-                                          width: 100,
-                                          child: TextField(
-                                            controller: quantidadeController,
-                                            textAlign: TextAlign.center,
-                                            keyboardType: TextInputType.number,
-                                            inputFormatters: [
-                                              LengthLimitingTextInputFormatter(
-                                                7,
-                                              ),
-                                              FilteringTextInputFormatter
-                                                  .digitsOnly,
-                                            ],
-                                            onChanged: (value) {
-                                              int novoValor =
-                                                  int.tryParse(value) ?? 1;
-                                              if (novoValor > maxValor ||
-                                                  novoValor >
-                                                      produto.qtest.toInt()) {
-                                                novoValor = quantidade;
-                                              } else if (novoValor !=
-                                                  quantidade) {
-                                                quantidade = novoValor;
-                                              }
-                                              quantidadeController.text =
-                                                  quantidade.toString();
-                                              quantidadeController.selection =
-                                                  TextSelection.collapsed(
-                                                    offset:
-                                                        quantidadeController
-                                                            .text
-                                                            .length,
-                                                  );
-                                              setState(() {});
-                                            },
-                                            decoration: InputDecoration(
-                                              contentPadding:
-                                                  const EdgeInsets.symmetric(
-                                                    vertical: 8,
-                                                  ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(10),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                        IconButton(
-                                          icon: const Icon(
-                                            Icons.add_circle,
-                                            color: Colors.blue,
-                                            size: 32,
-                                          ),
-                                          onPressed: () {
-                                            if (quantidade ==
-                                                produto.qtest.toInt()) {
-                                              return;
-                                            }
-                                            if (quantidade < maxValor) {
-                                              setState(() {
-                                                quantidade++;
-                                                quantidadeController.text =
-                                                    quantidade.toString();
-                                                quantidadeController.selection =
-                                                    TextSelection.collapsed(
-                                                      offset:
-                                                          quantidadeController
-                                                              .text
-                                                              .length,
-                                                    );
-                                              });
-                                            }
-                                          },
-                                        ),
-                                      ],
-                                    ),
-                                  ],
-                                );
-                              },
-                            ),
-                            confirmBtnText: "Adicionar",
-                            onConfirmBtnTap: () async {
-                              /// Se já estiver salvando um pedido não vai salvar
-                              /// novamente ao mesmo tempo.
-                              FocusScope.of(context).unfocus();
-
-                              produtoViewModel.selecionarProduto(
-                                produto,
-                                quantidade,
-                              );
-
-                              if (mounted) {
-                                Navigator.pop(context);
-                              }
-                            },
+                            produto: produto,
+                            produtoViewModel: produtoViewModel,
                           );
                         },
                         style: ElevatedButton.styleFrom(
@@ -569,9 +430,12 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
   void retornaScreenCliente(
     HomeViewModel homeViewModel,
     ClienteViewModel clienteViewModel,
+    ProdutoViewModel produtoViewModel,
   ) {
     homeViewModel.updateTitleAppBar("Clientes");
     clienteViewModel.limparClienteSelecionado();
+    produtoViewModel.exibirTelaResumo = false;
+    produtoViewModel.limparProdutosSelecionados();
     homeViewModel.updateSubtitleAppBar(
       "Total: ${clienteViewModel.clientesComFiltro.length}",
     );
