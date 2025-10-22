@@ -27,6 +27,7 @@ class PedidoService {
                 'codigo_tabela': pedcabModel.codigoTabela,
                 'tipo_venda': pedcabModel.tipoVenda,
                 'importado': pedcabModel.importado,
+                'observacao': pedcabModel.observacao,
               })
               .select('codigo_pedido')
               .maybeSingle();

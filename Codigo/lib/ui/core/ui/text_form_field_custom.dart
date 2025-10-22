@@ -26,8 +26,12 @@ abstract class TextFormFieldCustom {
     );
   }
 
-  static TextFormField buildTextFormFieldObservation({int maxLines = 4}) {
+  static TextFormField buildTextFormFieldObservation(
+    TextEditingController controller, {
+    int maxLines = 4,
+  }) {
     return TextFormField(
+      controller: controller,
       maxLines: maxLines,
       decoration: InputDecoration(
         labelStyle: TextStyle(

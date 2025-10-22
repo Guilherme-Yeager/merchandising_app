@@ -8,10 +8,12 @@ class PedcabModel {
   final String codigoTabela = '1';
   final String tipoVenda = '1';
   final int importado = 1;
+  final String observacao;
 
   PedcabModel({
     required this.dataPedido,
     required this.codigoVendedor,
     required this.codigoCliente,
+    required this.observacao,
   });
 }

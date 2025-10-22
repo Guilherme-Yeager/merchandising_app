@@ -1,13 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:merchandising_app/data/service/exception/service_exception.dart';
+import 'package:merchandising_app/domain/models/pedcab/pedcab_model.dart';
+import 'package:merchandising_app/domain/models/pedcorp/pedcorp_model.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart';
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
+import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
+import 'package:merchandising_app/ui/core/ui/error_screen.dart';
+import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
 import 'package:merchandising_app/ui/core/ui/show_modal_custom.dart';
 import 'package:merchandising_app/ui/core/ui/text_form_field_custom.dart';
 import 'package:merchandising_app/ui/home/view_models/home_viewmodel.dart';
+import 'package:merchandising_app/ui/pedido/view_models/pedido_viewmodel.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:provider/provider.dart';
 
@@ -19,6 +26,8 @@ class ResumoScreen extends StatefulWidget {
 }
 
 class _ResumoScreenState extends State<ResumoScreen> {
+  TextEditingController observacaoController = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     /// ViewModels
@@ -34,6 +43,10 @@ class _ResumoScreenState extends State<ResumoScreen> {
       listen: false,
     );
     final HomeViewModel homeViewModel = Provider.of<HomeViewModel>(
+      context,
+      listen: false,
+    );
+    final PedidoViewModel pedidoViewModel = Provider.of<PedidoViewModel>(
       context,
       listen: false,
     );
@@ -130,7 +143,9 @@ class _ResumoScreenState extends State<ResumoScreen> {
             ),
             Padding(
               padding: EdgeInsetsGeometry.symmetric(vertical: 4.0),
-              child: TextFormFieldCustom.buildTextFormFieldObservation(),
+              child: TextFormFieldCustom.buildTextFormFieldObservation(
+                observacaoController,
+              ),
             ),
           ],
         ),
@@ -153,6 +168,98 @@ class _ResumoScreenState extends State<ResumoScreen> {
                     ),
                   );
                   return;
+                }
+
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  barrierColor: Colors.black54,
+                  builder: (BuildContext context) {
+                    return const Center(
+                      child: CircularProgressIndicator(
+                        color: Colors.lightBlueAccent,
+                      ),
+                    );
+                  },
+                );
+                await Future.delayed(const Duration(seconds: 2), () {});
+
+                try {
+                  /// Definindo o cabeçalho do pedido
+                  PedcabModel pedcabModel = PedcabModel(
+                    dataPedido: DateFormat('dd/MM/yyyy').format(DateTime.now()),
+                    codigoVendedor:
+                        loginViewModel.userModel!.codusur.toString(),
+                    codigoCliente:
+                        clienteViewModel.clienteSelecionado!.codcli.toString(),
+                    observacao: observacaoController.text,
+                  );
+
+                  /// Inserindo o cabeçalho do pedido e obtendo o código gerado
+                  int codPedido = await pedidoViewModel.inserirCabecalhoPedido(
+                    pedcabModel,
+                  );
+
+                  AppLogger.instance.i(
+                    "Código do cabeçalho do pedido: $codPedido",
+                  );
+
+                  produtoViewModel.produtosSelecionados.forEach((
+                    produto,
+                    quantidade,
+                  ) async {
+                    /// Obtendo o preço de venda do produto
+                    double precoVenda =
+                        await produtoViewModel.getPrecoVenda(produto.codprod) ??
+                        0.0;
+
+                    /// Definindo o corpo do pedido
+                    PedcorpModel pedcorpModel = PedcorpModel(
+                      codigoPedido: codPedido,
+                      codigoProduto: produto.codprod.toString(),
+                      quantidade: quantidade,
+                      precoBase: precoVenda,
+                      precoVenda: precoVenda,
+                    );
+
+                    /// Inserindo o corpo do pedido
+                    pedidoViewModel.inserirCorpoPedido(pedcorpModel);
+                  });
+                } on ServiceException catch (exception) {
+                  if (exception.tipo == TipoErro.offline) {
+                    await Future.delayed(Duration(seconds: 1));
+                    if (context.mounted) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => OfflineScreen()),
+                      );
+                      return;
+                    }
+                  } else {
+                    await Future.delayed(Duration(seconds: 1));
+                    if (context.mounted) {
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder:
+                              (_) => ErrorScreen(mensagem: exception.mensagem),
+                        ),
+                      );
+                    }
+                    return;
+                  }
+                }
+
+                if (context.mounted) {
+                  Navigator.pop(context);
+                  homeViewModel.updateTitleAppBar("Clientes");
+                  clienteViewModel.limparClienteSelecionado();
+                  produtoViewModel.exibirTelaResumo = false;
+                  produtoViewModel.limparProdutosSelecionados();
+                  homeViewModel.updateSubtitleAppBar(
+                    "Total: ${clienteViewModel.clientesComFiltro.length}",
+                  );
+                  pedidoViewModel.salvarPedido();
                 }
               },
               style: ElevatedButton.styleFrom(
