@@ -50,226 +50,233 @@ class _ResumoScreenState extends State<ResumoScreen> {
       context,
       listen: false,
     );
-    return Scaffold(
-      backgroundColor: AppColors.mainColor,
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            Align(
-              alignment: Alignment.topLeft,
-              child: InkWell(
-                onTap: () {
-                  FocusScope.of(context).unfocus();
-                  produtoViewModel.exibirTelaResumo = false;
-                  homeViewModel.updateTitleAppBar("Produtos");
-                  homeViewModel.updateSubtitleAppBar(
-                    "Total: ${produtoViewModel.produtosComFiltro.length}",
-                  );
-                },
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  textBaseline: TextBaseline.alphabetic,
-                  children: const [
-                    Icon(
-                      Icons.arrow_back_outlined,
-                      color: Colors.white,
-                      size: 22,
-                    ),
-                    SizedBox(width: 8),
-                    Text(
-                      "Voltar",
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            SizedBox(height: 10),
-            Text(
-              "Detalhes da Venda",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            detalhesCabecalho(
-              loginViewModel.userModel!.nome,
-              clienteViewModel.clienteSelecionado!.cliente,
-            ),
-            FractionallySizedBox(
-              widthFactor: 0.7,
-              child: const Divider(
-                color: Colors.white,
-                height: 32,
-                thickness: 0.8,
-              ),
-            ),
-            Text(
-              "Produtos Selecionados",
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            SizedBox(height: 10),
-            if (produtoViewModel.produtosSelecionados.isNotEmpty)
-              detalhesCorpo(produtoViewModel, homeViewModel)
-            else
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 10.0),
-                child: Text(
-                  'Nenhum produto selecionado',
-                  style: TextStyle(color: Colors.white, fontSize: 16),
-                ),
-              ),
-            SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: const Text(
-                'Observação',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsetsGeometry.symmetric(vertical: 4.0),
-              child: TextFormFieldCustom.buildTextFormFieldObservation(
-                observacaoController,
-              ),
-            ),
-          ],
-        ),
-      ),
-      bottomNavigationBar: Container(
-        color: const Color.fromARGB(255, 68, 128, 71),
-        padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
-        child: Center(
-          heightFactor: 1.0,
-          child: SizedBox(
-            width: 150,
-            child: ElevatedButton(
-              onPressed: () async {
-                FocusScope.of(context).unfocus();
-                if (produtoViewModel.produtosSelecionados.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text('Nenhum produto selecionado...'),
-                      duration: Duration(seconds: 2),
-                    ),
-                  );
-                  return;
-                }
-
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  barrierColor: Colors.black54,
-                  builder: (BuildContext context) {
-                    return const Center(
-                      child: CircularProgressIndicator(
-                        color: Colors.lightBlueAccent,
-                      ),
+    return SafeArea(
+      child: Scaffold(
+        backgroundColor: AppColors.mainColor,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            children: [
+              Align(
+                alignment: Alignment.topLeft,
+                child: InkWell(
+                  onTap: () {
+                    FocusScope.of(context).unfocus();
+                    produtoViewModel.exibirTelaResumo = false;
+                    homeViewModel.updateTitleAppBar("Produtos");
+                    homeViewModel.updateSubtitleAppBar(
+                      "Total: ${produtoViewModel.produtosComFiltro.length}",
                     );
                   },
-                );
-                await Future.delayed(const Duration(seconds: 2), () {});
-
-                try {
-                  /// Definindo o cabeçalho do pedido
-                  PedcabModel pedcabModel = PedcabModel(
-                    dataPedido: DateFormat('dd/MM/yyyy').format(DateTime.now()),
-                    codigoVendedor:
-                        loginViewModel.userModel!.codusur.toString(),
-                    codigoCliente:
-                        clienteViewModel.clienteSelecionado!.codcli.toString(),
-                    observacao: observacaoController.text,
-                  );
-
-                  /// Inserindo o cabeçalho do pedido e obtendo o código gerado
-                  int codPedido = await pedidoViewModel.inserirCabecalhoPedido(
-                    pedcabModel,
-                  );
-
-                  AppLogger.instance.i(
-                    "Código do cabeçalho do pedido: $codPedido",
-                  );
-
-                  produtoViewModel.produtosSelecionados.forEach((
-                    produto,
-                    quantidade,
-                  ) async {
-                    /// Obtendo o preço de venda do produto
-                    double precoVenda =
-                        await produtoViewModel.getPrecoVenda(produto.codprod) ??
-                        0.0;
-
-                    /// Definindo o corpo do pedido
-                    PedcorpModel pedcorpModel = PedcorpModel(
-                      codigoPedido: codPedido,
-                      codigoProduto: produto.codprod.toString(),
-                      quantidade: quantidade,
-                      precoBase: precoVenda,
-                      precoVenda: precoVenda,
-                    );
-
-                    /// Inserindo o corpo do pedido
-                    pedidoViewModel.inserirCorpoPedido(pedcorpModel);
-                  });
-                } on ServiceException catch (exception) {
-                  if (exception.tipo == TipoErro.offline) {
-                    await Future.delayed(Duration(seconds: 1));
-                    if (context.mounted) {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => OfflineScreen()),
-                      );
-                      return;
-                    }
-                  } else {
-                    await Future.delayed(Duration(seconds: 1));
-                    if (context.mounted) {
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder:
-                              (_) => ErrorScreen(mensagem: exception.mensagem),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    textBaseline: TextBaseline.alphabetic,
+                    children: const [
+                      Icon(
+                        Icons.arrow_back_outlined,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        "Voltar",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
-                      );
-                    }
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(height: 10),
+              Text(
+                "Detalhes da Venda",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              detalhesCabecalho(
+                loginViewModel.userModel!.nome,
+                clienteViewModel.clienteSelecionado!.cliente,
+              ),
+              FractionallySizedBox(
+                widthFactor: 0.7,
+                child: const Divider(
+                  color: Colors.white,
+                  height: 32,
+                  thickness: 0.8,
+                ),
+              ),
+              Text(
+                "Produtos Selecionados",
+                style: TextStyle(
+                  color: Colors.white,
+                  fontSize: 22,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              SizedBox(height: 10),
+              if (produtoViewModel.produtosSelecionados.isNotEmpty)
+                detalhesCorpo(produtoViewModel, homeViewModel)
+              else
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Text(
+                    'Nenhum produto selecionado',
+                    style: TextStyle(color: Colors.white, fontSize: 16),
+                  ),
+                ),
+              SizedBox(height: 20),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: const Text(
+                  'Observação',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsetsGeometry.symmetric(vertical: 4.0),
+                child: TextFormFieldCustom.buildTextFormFieldObservation(
+                  observacaoController,
+                ),
+              ),
+            ],
+          ),
+        ),
+        bottomNavigationBar: Container(
+          color: const Color.fromARGB(255, 68, 128, 71),
+          padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 16.0),
+          child: Center(
+            heightFactor: 1.0,
+            child: SizedBox(
+              width: 150,
+              child: ElevatedButton(
+                onPressed: () async {
+                  FocusScope.of(context).unfocus();
+                  if (produtoViewModel.produtosSelecionados.isEmpty) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Nenhum produto selecionado...'),
+                        duration: Duration(seconds: 2),
+                      ),
+                    );
                     return;
                   }
-                }
 
-                if (context.mounted) {
-                  Navigator.pop(context);
-                  homeViewModel.updateTitleAppBar("Clientes");
-                  clienteViewModel.limparClienteSelecionado();
-                  produtoViewModel.exibirTelaResumo = false;
-                  produtoViewModel.limparProdutosSelecionados();
-                  homeViewModel.updateSubtitleAppBar(
-                    "Total: ${clienteViewModel.clientesComFiltro.length}",
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    barrierColor: Colors.black54,
+                    builder: (BuildContext context) {
+                      return const Center(
+                        child: CircularProgressIndicator(
+                          color: Colors.lightBlueAccent,
+                        ),
+                      );
+                    },
                   );
-                  pedidoViewModel.salvarPedido();
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.buttonLogin,
-                padding: const EdgeInsets.symmetric(vertical: 12.0),
-                side: const BorderSide(color: Colors.white, width: 1.0),
-              ),
-              child: const Text(
-                'Salvar',
-                style: TextStyle(fontSize: 22, color: Colors.white),
+                  await Future.delayed(const Duration(seconds: 2), () {});
+
+                  try {
+                    /// Definindo o cabeçalho do pedido
+                    PedcabModel pedcabModel = PedcabModel(
+                      dataPedido: DateFormat(
+                        'dd/MM/yyyy',
+                      ).format(DateTime.now()),
+                      codigoVendedor:
+                          loginViewModel.userModel!.codusur.toString(),
+                      codigoCliente:
+                          clienteViewModel.clienteSelecionado!.codcli
+                              .toString(),
+                      observacao: observacaoController.text,
+                    );
+
+                    /// Inserindo o cabeçalho do pedido e obtendo o código gerado
+                    int codPedido = await pedidoViewModel
+                        .inserirCabecalhoPedido(pedcabModel);
+
+                    AppLogger.instance.i(
+                      "Código do cabeçalho do pedido: $codPedido",
+                    );
+
+                    produtoViewModel.produtosSelecionados.forEach((
+                      produto,
+                      quantidade,
+                    ) async {
+                      /// Obtendo o preço de venda do produto
+                      double precoVenda =
+                          await produtoViewModel.getPrecoVenda(
+                            produto.codprod,
+                          ) ??
+                          0.0;
+
+                      /// Definindo o corpo do pedido
+                      PedcorpModel pedcorpModel = PedcorpModel(
+                        codigoPedido: codPedido,
+                        codigoProduto: produto.codprod.toString(),
+                        quantidade: quantidade,
+                        precoBase: precoVenda,
+                        precoVenda: precoVenda,
+                      );
+
+                      /// Inserindo o corpo do pedido
+                      pedidoViewModel.inserirCorpoPedido(pedcorpModel);
+                    });
+                  } on ServiceException catch (exception) {
+                    if (exception.tipo == TipoErro.offline) {
+                      await Future.delayed(Duration(seconds: 1));
+                      if (context.mounted) {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => OfflineScreen()),
+                        );
+                        return;
+                      }
+                    } else {
+                      await Future.delayed(Duration(seconds: 1));
+                      if (context.mounted) {
+                        Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                            builder:
+                                (_) =>
+                                    ErrorScreen(mensagem: exception.mensagem),
+                          ),
+                        );
+                      }
+                      return;
+                    }
+                  }
+
+                  if (context.mounted) {
+                    Navigator.pop(context);
+                    homeViewModel.updateTitleAppBar("Clientes");
+                    clienteViewModel.limparClienteSelecionado();
+                    produtoViewModel.exibirTelaResumo = false;
+                    produtoViewModel.limparProdutosSelecionados();
+                    homeViewModel.updateSubtitleAppBar(
+                      "Total: ${clienteViewModel.clientesComFiltro.length}",
+                    );
+                    pedidoViewModel.salvarPedido();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.buttonLogin,
+                  padding: const EdgeInsets.symmetric(vertical: 12.0),
+                  side: const BorderSide(color: Colors.white, width: 1.0),
+                ),
+                child: const Text(
+                  'Salvar',
+                  style: TextStyle(fontSize: 22, color: Colors.white),
+                ),
               ),
             ),
           ),
