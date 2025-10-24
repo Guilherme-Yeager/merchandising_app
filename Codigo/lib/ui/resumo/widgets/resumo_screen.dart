@@ -459,7 +459,8 @@ class _ResumoScreenState extends State<ResumoScreen> {
                         child: IntrinsicHeight(
                           child: Row(
                             children: [
-                              Flexible(
+                              Expanded(
+                                flex: 2,
                                 child: Text(
                                   produto.descricao,
                                   style: const TextStyle(
