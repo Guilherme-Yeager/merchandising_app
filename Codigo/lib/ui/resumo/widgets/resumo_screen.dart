@@ -285,6 +285,14 @@ class _ResumoScreenState extends State<ResumoScreen> {
     );
   }
 
+  /// Exibe os detalhes do cabeçalho do pedido.
+  ///
+  /// - [nomeVendedor]: nome do vendedor.
+  /// - [nomeCliente]: nome do cliente.
+  ///
+  /// Retorna uma coluna com os detalhes da venda, incluindo nome do vendedor,
+  /// nome do cliente e data atual, onde representa o cabeçalho do pedido
+  /// na tela de resumo.
   Column detalhesCabecalho(String nomeVendedor, String nomeCliente) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -384,6 +392,13 @@ class _ResumoScreenState extends State<ResumoScreen> {
     );
   }
 
+  /// Exibe os detalhes do corpo do pedido.
+  ///
+  /// - [produtoViewModel]: ViewModel de produtos.
+  /// - [homeViewModel]: ViewModel da home.
+  ///
+  /// Retorna uma coluna com os detalhes da venda, incluindo os produtos
+  /// selecionados.
   Column detalhesCorpo(
     ProdutoViewModel produtoViewModel,
     HomeViewModel homeViewModel,
@@ -533,6 +548,7 @@ class _ResumoScreenState extends State<ResumoScreen> {
                                 context: context,
                                 produto: produto,
                                 produtoViewModel: produtoViewModel,
+                                quantidade: quantidade,
                               );
                             },
                           ),

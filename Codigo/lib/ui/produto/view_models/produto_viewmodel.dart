@@ -76,16 +76,30 @@ class ProdutoViewModel extends ChangeNotifier {
     }
   }
 
+  /// Seleciona um produto para o pedido, associando-o com uma quantidade.
+  ///
+  /// - [produto] é o produto a ser selecionado.
+  /// - [quantidade] é a quantidade do produto selecionado.
+  ///
+  /// Não retorna valor, mas notifica os ouvintes sobre a mudança.
   void selecionarProduto(ProdutoModel produto, int quantidade) {
     _produtosSelecionados[produto] = quantidade;
     notifyListeners();
   }
 
+  /// Remove um produto selecionado do pedido.
+  ///
+  /// - [produto] é o produto a ser removido.
+  ///
+  /// Não retorna valor, mas notifica os ouvintes sobre a mudança.
   void removerProdutoSelecionado(ProdutoModel produto) {
     _produtosSelecionados.remove(produto);
     notifyListeners();
   }
 
+  /// Limpa todos os produtos selecionados do pedido.
+  ///
+  /// Não retorna valor, mas notifica os ouvintes sobre a mudança.
   void limparProdutosSelecionados() {
     _produtosSelecionados.clear();
     notifyListeners();

@@ -101,8 +101,8 @@ abstract class DialogCustom {
     required BuildContext context,
     required ProdutoModel produto,
     required ProdutoViewModel produtoViewModel,
+    int quantidade = 1,
   }) {
-    int quantidade = 1;
     const int maxValor = 9999999;
     final TextEditingController quantidadeController = TextEditingController(
       text: quantidade.toString(),
