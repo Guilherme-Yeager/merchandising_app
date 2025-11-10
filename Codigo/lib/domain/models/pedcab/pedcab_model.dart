@@ -7,7 +7,7 @@ class PedcabModel {
   final String codigoPlanoPagamento = '10';
   final String codigoTabela = '1';
   final String tipoVenda = '1';
-  final int importado = 1;
+  final int importado = 9;
   final String observacao;
 
   PedcabModel({
