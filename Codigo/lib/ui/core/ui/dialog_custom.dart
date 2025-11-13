@@ -108,7 +108,6 @@ abstract class DialogCustom {
     final TextEditingController quantidadeController = TextEditingController(
       text: quantidade.toString(),
     );
-    String? imagem = 'assets/images/teste.jpeg';
     return showDialog(
       context: context,
       builder: (context) {
@@ -129,9 +128,44 @@ abstract class DialogCustom {
                       child: SizedBox(
                         width: double.infinity,
                         height: 200,
-                        child: Image.asset(
-                          imagem ?? 'assets/images/sem-imagem.png',
+                        child: Image.network(
+                          'https://api.tioluiz.cloud/storage/v1/object/public/Controle%20TL/${produto.codprod}.png',
                           fit: BoxFit.cover,
+                          errorBuilder: (context, error, stackTrace) {
+                            AppLogger.instance.e(
+                              "Erro ao carregar a imagem: $error",
+                            );
+                            return Container(
+                              color: Colors.grey[300],
+                              child: SizedBox(
+                                width: double.infinity,
+                                height: 200,
+                                child: Image.asset(
+                                  'assets/images/sem-imagem.png',
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            );
+                          },
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return SizedBox(
+                              width: double.infinity,
+                              height: 200,
+                              child: Center(
+                                child: CircularProgressIndicator(
+                                  value:
+                                      loadingProgress.expectedTotalBytes != null
+                                          ? loadingProgress
+                                                  .cumulativeBytesLoaded /
+                                              loadingProgress
+                                                  .expectedTotalBytes!
+                                          : null,
+                                  strokeWidth: 3,
+                                ),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
