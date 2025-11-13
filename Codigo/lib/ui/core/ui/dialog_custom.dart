@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:merchandising_app/domain/models/produto/produto_model.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
+import 'package:merchandising_app/ui/core/themes/app_colors.dart';
 import 'package:merchandising_app/ui/produto/view_models/produto_viewmodel.dart';
 import 'package:quickalert/quickalert.dart';
 
@@ -107,114 +108,169 @@ abstract class DialogCustom {
     final TextEditingController quantidadeController = TextEditingController(
       text: quantidade.toString(),
     );
-    return QuickAlert.show(
+    String? imagem = 'assets/images/teste.jpeg';
+    return showDialog(
       context: context,
-      type: QuickAlertType.custom,
-      widget: StatefulBuilder(
-        builder: (context, setState) {
-          return Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                'Produto ${produto.codprod}',
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+      builder: (context) {
+        int quantidadeLocal = quantidade;
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              contentPadding: const EdgeInsets.all(20),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15),
               ),
-              const SizedBox(height: 8),
-              const Text('Quantidade'),
-              const SizedBox(height: 12),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: const Icon(
-                      Icons.remove_circle,
-                      color: Colors.blue,
-                      size: 32,
-                    ),
-                    onPressed: () {
-                      if (quantidade > 1) {
-                        setState(() {
-                          quantidade--;
-                          quantidadeController.text = quantidade.toString();
-                        });
-                      }
-                    },
-                  ),
-                  SizedBox(
-                    width: 100,
-                    child: TextField(
-                      controller: quantidadeController,
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        LengthLimitingTextInputFormatter(7),
-                        FilteringTextInputFormatter.digitsOnly,
-                      ],
-                      onChanged: (value) {
-                        int novoValor = int.tryParse(value) ?? 1;
-                        if (novoValor > maxValor ||
-                            novoValor > produto.qtest.toInt()) {
-                          novoValor = quantidade;
-                        } else if (novoValor != quantidade) {
-                          quantidade = novoValor;
-                        }
-                        quantidadeController.text = quantidade.toString();
-                        quantidadeController
-                            .selection = TextSelection.collapsed(
-                          offset: quantidadeController.text.length,
-                        );
-                        setState(() {});
-                      },
-                      decoration: InputDecoration(
-                        contentPadding: const EdgeInsets.symmetric(vertical: 8),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10),
+              content: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: SizedBox(
+                        width: double.infinity,
+                        height: 200,
+                        child: Image.asset(
+                          imagem ?? 'assets/images/sem-imagem.png',
+                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(
-                      Icons.add_circle,
-                      color: Colors.blue,
-                      size: 32,
+                    const SizedBox(height: 16),
+                    Text(
+                      'Produto ${produto.codprod}',
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    onPressed: () {
-                      if (quantidade == produto.qtest.toInt()) {
-                        return;
-                      }
-                      if (quantidade < maxValor) {
-                        setState(() {
-                          quantidade++;
-                          quantidadeController.text = quantidade.toString();
-                          quantidadeController
-                              .selection = TextSelection.collapsed(
-                            offset: quantidadeController.text.length,
-                          );
-                        });
-                      }
-                    },
-                  ),
-                ],
+                    const SizedBox(height: 8),
+                    const Text('Quantidade'),
+                    const SizedBox(height: 12),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        IconButton(
+                          icon: const Icon(
+                            Icons.remove_circle,
+                            color: Colors.blue,
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            if (quantidadeLocal > 1) {
+                              setState(() {
+                                quantidadeLocal--;
+                                quantidadeController.text =
+                                    quantidadeLocal.toString();
+                              });
+                            }
+                          },
+                        ),
+                        SizedBox(
+                          width: 100,
+                          child: TextField(
+                            controller: quantidadeController,
+                            textAlign: TextAlign.center,
+                            keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(7),
+                              FilteringTextInputFormatter.digitsOnly,
+                            ],
+                            onChanged: (value) {
+                              int novoValor = int.tryParse(value) ?? 1;
+                              if (novoValor > maxValor ||
+                                  novoValor > produto.qtest.toInt()) {
+                                novoValor = quantidadeLocal;
+                              } else if (novoValor != quantidadeLocal) {
+                                quantidadeLocal = novoValor;
+                              }
+                              quantidadeController.text =
+                                  quantidadeLocal.toString();
+                              quantidadeController
+                                  .selection = TextSelection.collapsed(
+                                offset: quantidadeController.text.length,
+                              );
+                              setState(() {});
+                            },
+                            decoration: InputDecoration(
+                              contentPadding: const EdgeInsets.symmetric(
+                                vertical: 8,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                          ),
+                        ),
+                        IconButton(
+                          icon: const Icon(
+                            Icons.add_circle,
+                            color: Colors.blue,
+                            size: 32,
+                          ),
+                          onPressed: () {
+                            if (quantidadeLocal == produto.qtest.toInt()) {
+                              return;
+                            }
+                            if (quantidadeLocal < maxValor) {
+                              setState(() {
+                                quantidadeLocal++;
+                                quantidadeController.text =
+                                    quantidadeLocal.toString();
+                                quantidadeController
+                                    .selection = TextSelection.collapsed(
+                                  offset: quantidadeController.text.length,
+                                );
+                              });
+                            }
+                          },
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ],
-          );
-        },
-      ),
-      confirmBtnText: "Adicionar",
-      onConfirmBtnTap: () async {
-        /// Se já estiver salvando um pedido não vai salvar
-        /// novamente ao mesmo tempo.
-        FocusScope.of(context).unfocus();
-
-        produtoViewModel.selecionarProduto(produto, quantidade);
-
-        if (context.mounted) {
-          Navigator.of(context).pop(true);
-        }
+              actions: [
+                Row(
+                  children: [
+                    TextButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        Navigator.of(context).pop(false);
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.buttonLogin,
+                      ),
+                      child: const Text(
+                        'Cancelar',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+                    Spacer(),
+                    TextButton(
+                      onPressed: () async {
+                        FocusScope.of(context).unfocus();
+                        produtoViewModel.selecionarProduto(
+                          produto,
+                          quantidadeLocal,
+                        );
+                        if (context.mounted) {
+                          Navigator.of(context).pop(true);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.buttonLogin,
+                      ),
+                      child: const Text(
+                        'Adicionar',
+                        style: TextStyle(fontSize: 18, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
