@@ -104,4 +104,17 @@ class ProdutoViewModel extends ChangeNotifier {
     _produtosSelecionados.clear();
     notifyListeners();
   }
+
+  /// Verifica se um produto está selecionado para o pedido.
+  ///
+  /// - [produto] é o produto a ser verificado.
+  ///
+  /// Retorna `true` se o produto estiver selecionado, caso contrário retorna `false`.
+  bool produtoEstaSelecionado(ProdutoModel produto) {
+    return _produtosSelecionados.keys
+        .map((produto) {
+          return produto.codprod;
+        })
+        .contains(produto.codprod);
+  }
 }

@@ -321,7 +321,13 @@ class _ProdutoScreenState extends State<ProdutoScreen> {
               Center(
                 child: Text(
                   produto.codprod.toString(),
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    color:
+                        produtoViewModel.produtoEstaSelecionado(produto)
+                            ? Colors.green
+                            : Colors.black,
+                  ),
                   textAlign: TextAlign.center,
                 ),
               ),
