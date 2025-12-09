@@ -170,15 +170,13 @@ abstract class DialogCustom {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    Text(
-                      'Produto ${produto.codprod}',
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
+                    const Text(
+                      'Quantidade',
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
                       ),
                     ),
-                    const SizedBox(height: 8),
-                    const Text('Quantidade'),
                     const SizedBox(height: 12),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
