@@ -8,6 +8,7 @@ import 'package:merchandising_app/ui/auth/login/view_models/login_viewmodel.dart
 import 'package:merchandising_app/ui/cliente/view_models/cliente_viewmodel.dart';
 import 'package:merchandising_app/ui/core/logger/app_logger.dart';
 import 'package:merchandising_app/ui/core/themes/app_colors.dart';
+import 'package:merchandising_app/ui/core/ui/bottom_sheet_custom.dart';
 import 'package:merchandising_app/ui/core/ui/dialog_custom.dart';
 import 'package:merchandising_app/ui/core/ui/error_screen.dart';
 import 'package:merchandising_app/ui/core/ui/offline_screen.dart';
@@ -523,15 +524,22 @@ class _ResumoScreenState extends State<ResumoScreen> {
                             iconSize: 16,
                             icon: const Icon(Icons.remove),
                             color: Colors.white,
-                            onPressed: () {
-                              setState(() {
-                                produtoViewModel.removerProdutoSelecionado(
-                                  produto,
+                            onPressed: () async {
+                              if (await BottomSheetCustom.deleteConfirmation(
+                                context: context,
+                                title: 'Excluir Produto',
+                                message:
+                                    'Tem certeza que deseja remover o produto ${produto.codprod}?',
+                              )) {
+                                setState(() {
+                                  produtoViewModel.removerProdutoSelecionado(
+                                    produto,
+                                  );
+                                });
+                                homeViewModel.updateSubtitleAppBar(
+                                  "Produtos Selecionados: ${produtoViewModel.produtosSelecionados.values.length}",
                                 );
-                              });
-                              homeViewModel.updateSubtitleAppBar(
-                                "Produtos Selecionados: ${produtoViewModel.produtosSelecionados.values.length}",
-                              );
+                              }
                             },
                           ),
                         ),
